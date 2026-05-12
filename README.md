@@ -44,6 +44,25 @@ These prompts assume an agentic CLI with file read, shell execution,
 and git (branch + commit). Designed against Claude Code and Codex CLI;
 anything with the same capability set should work.
 
+## Best with documented conventions
+
+Most prompts here look for project-specific LLM instructions —
+`CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`,
+`.cursor/rules/**` — to understand the conventions they should
+enforce or honour. The audit prompts use those rules as the *spine*
+of the audit; the test-writing prompts read them to match local
+style rather than guess.
+
+A repo with no LLM instructions still works — the prompts fall back
+to generic categories — but the project-specific spine collapses. A
+short, opinionated `CLAUDE.md` is usually a higher-leverage
+investment than tuning the prompts themselves.
+
+If you find an audit catching gaps that documented rules *could*
+have prevented, add the rule and re-run. Treat the prompts as a
+feedback loop on your convention documentation, not just on the
+code.
+
 ## Current contents
 
 ### `AuditTesting/`
