@@ -3,7 +3,7 @@
 Audit a GitHub repository's open issues for duplicates and
 near-duplicates.
 
-**This prompt extends [`audit-duplicate-issues.core.prompt.md`](./audit-duplicate-issues.core.prompt.md).**
+**This prompt extends [`core/audit-duplicate-issues.core.prompt.md`](./core/audit-duplicate-issues.core.prompt.md).**
 Read the core file first for the workflow shape (Step 0
 ask-for-target, Step 2 clustering by overlap signal, Step 3
 classification taxonomy, Step 4 reporting format, Step 5 execute

@@ -9,8 +9,8 @@ the platform variants reference; they're not invoked directly.
 
 | Prompt | Scope | What it does |
 |---|---|---|
-| `audit-duplicate-issues.core.prompt.md` | Shared scaffold | Workflow shape, clustering signals, classification taxonomy, output format, constraints. Not invoked directly. |
 | `audit-duplicate-issues.github.prompt.md` | GitHub | Extends the core with the GitHub-specific commands (`gh repo view`, `gh issue list`, `gh issue close`, `gh issue edit`) and the `OWNER/REPO` target format. |
+| `core/audit-duplicate-issues.core.prompt.md` | Shared scaffold | Workflow shape, clustering signals, classification taxonomy, output format, constraints. Not invoked directly. |
 
 ## Picking a variant
 
