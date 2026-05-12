@@ -59,6 +59,23 @@ A pair of prompts for working on a repo's test suite.
 See [`AuditTesting/README.md`](AuditTesting/README.md) for the full
 workflow.
 
+### `MilestoneRelease/`
+
+Three prompts that form a milestone-release workflow: smoke test the
+shipped flows, audit the codebase for drift, then action the triaged
+findings.
+
+- `post-milestone-smoke-test.prompt.md` — drives the milestone's
+  flows through a browser MCP, records pass / fail / blocked.
+- `post-milestone-audit.prompt.md` — reads the project's documented
+  conventions and produces a ranked report with triage suggestions.
+- `post-milestone-fix.prompt.md` — actions the audit findings
+  matching the labels and sections you specify. Commits locally
+  only.
+
+See [`MilestoneRelease/README.md`](MilestoneRelease/README.md) for
+the full workflow and adaptation notes.
+
 ## Status
 
 Work in progress. More prompt collections will be added over time.
