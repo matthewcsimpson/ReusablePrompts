@@ -61,20 +61,27 @@ workflow.
 
 ### `MilestoneRelease/`
 
-Three prompts that form a milestone-release workflow: smoke test the
-shipped flows, audit the codebase for drift, then action the triaged
-findings.
+A milestone-release workflow: smoke test the shipped flows, audit
+the codebase for drift, then action the triaged findings. Some
+steps have framework-specific variants — filenames carry a scope
+tag (`.web`, `.nextjs`, `.python`) when a prompt is tied to a
+particular stack.
 
-- `post-milestone-smoke-test.prompt.md` — drives the milestone's
-  flows through a browser MCP, records pass / fail / blocked.
-- `post-milestone-audit.prompt.md` — reads the project's documented
-  conventions and produces a ranked report with triage suggestions.
+- `post-milestone-smoke-test.web.prompt.md` — drives the
+  milestone's flows through a browser MCP. Web apps only.
+- `post-milestone-audit.core.prompt.md` — shared scaffold (not
+  invoked directly).
+- `post-milestone-audit.nextjs.prompt.md` — audit variant for
+  Next.js + TypeScript projects.
+- `post-milestone-audit.python.prompt.md` — audit variant for
+  Python projects (FastAPI / Django / Flask / CLI / library).
 - `post-milestone-fix.prompt.md` — actions the audit findings
   matching the labels and sections you specify. Commits locally
-  only.
+  only. Stack-agnostic.
 
 See [`MilestoneRelease/README.md`](MilestoneRelease/README.md) for
-the full workflow and adaptation notes.
+the full workflow, how to pick an audit variant, and how to add a
+new one.
 
 ## Contributing
 

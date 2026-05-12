@@ -1,12 +1,27 @@
-# Post-milestone smoke test
+# Post-milestone smoke test — web variant
 
-Drive the app through a browser MCP server after a milestone tag is
+Drive a web app through a browser MCP server after a milestone tag is
 cut. Discover the flows from the milestone's closed issues / tickets,
 execute them against a running app, observe console + network during
 the runs, and write a pass/fail report.
 
 Do not modify any code. The smoke run is observation and execution —
 fixes go in their own follow-up issues.
+
+## Scope
+
+This prompt is **web-app-only**. It assumes:
+
+- The app is reachable through a browser (HTML / JS / network — not
+  a CLI, daemon, mobile binary, or library).
+- A browser-control MCP tool is available (Playwright MCP
+  recommended).
+- A running dev server is reachable from the browser.
+
+For CLI tools, libraries, mobile apps, or background workers, this
+prompt doesn't apply — those need a different smoke-test shape.
+None exists in this repo yet; consider opening an issue or adding
+one.
 
 ---
 
