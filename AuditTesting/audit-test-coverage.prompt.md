@@ -66,19 +66,20 @@ swamp signal.
 
 Enumerate testable source files. "Testable" usually means:
 
-- Components / pages / views (anything with rendering logic).
-- Route handlers / controllers / API endpoints.
 - Business logic modules / services / use-cases.
+- Route handlers / controllers / API endpoints.
 - Utilities and pure helpers.
+- Components / pages / views (anything with rendering logic, for
+  UI codebases).
 - Auth, payment, and other security or money-handling code.
 
 Explicitly skip:
 
-- Type-only files (`*.types.ts`, `*.d.ts`).
-- Re-export barrels (`index.ts` that only re-exports).
+- Type-only files (`*.types.ts`, `*.d.ts`, `*.pyi`, etc.).
+- Re-export barrels (files that only re-export from other modules).
 - Generated code, vendored / third-party files.
 - Configuration files.
-- Storybook stories, fixtures, scripts, build helpers.
+- Stories, fixtures, scripts, build helpers.
 
 For each testable file, classify:
 
