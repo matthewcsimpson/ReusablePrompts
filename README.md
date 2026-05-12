@@ -113,6 +113,18 @@ Pre-merge checks for a pull request branch.
 
 See [`PRWorkflow/README.md`](PRWorkflow/README.md).
 
+### `IssueWorkflow/`
+
+Issue-tracker maintenance. GitHub-specific (uses `gh`).
+
+- `audit-duplicate-issues.prompt.md` — surveys open issues for
+  duplicates and near-duplicates, clusters them, classifies, and
+  recommends an action per cluster. Asks for the target repo at
+  the start of the run. Stops for confirmation before any
+  closure or edit.
+
+See [`IssueWorkflow/README.md`](IssueWorkflow/README.md).
+
 ### `Refactoring/`
 
 Read-only audits that surface refactor opportunities.
