@@ -190,7 +190,7 @@ For files changed in this milestone, check:
 
 ---
 
-## §4.5 — Extraction and componentisation
+## §4.5 — Extraction
 
 Python equivalent of the UI-stack §4.5 — the structural unit is the
 module / class / function rather than the component.

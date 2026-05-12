@@ -140,7 +140,7 @@ stack.
 
 ---
 
-## Step 4.5 — Extraction and componentisation
+## Step 4.5 — Extraction
 
 This section asks "is this code at the right altitude?" — independent
 of whether it works correctly. The goal is to surface refactor
@@ -239,7 +239,7 @@ since last audit>
 <grouped by Step 4 category from variant — actionable findings
 listed in full, pattern observations aggregated with top 3 worst>
 
-## Extraction and componentisation
+## Extraction
 
 <grouped by Step 4.5 category from variant — 💡 EXTRACT entries>
 

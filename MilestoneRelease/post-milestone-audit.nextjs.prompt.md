@@ -182,7 +182,7 @@ For files changed in this milestone, check:
 
 ---
 
-## §4.5 — Extraction and componentisation
+## §4.5 — Extraction
 
 ### Component decomposition
 
