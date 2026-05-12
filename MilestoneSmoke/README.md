@@ -12,6 +12,8 @@ shared scaffold lives in `core/`.
 | Prompt | Scope |
 |---|---|
 | `post-milestone-smoke-test.web.prompt.md` | Web app driven through a browser MCP |
+| `post-milestone-smoke-test.api.prompt.md` | HTTP API exercised with `curl` / `httpie` against a running instance |
+| `post-milestone-smoke-test.cli.prompt.md` | Non-interactive CLI invoked with concrete args, observing exit code / stdout / stderr / side-effects |
 | `core/post-milestone-smoke-test.core.prompt.md` | Shared scaffold. Not invoked directly. |
 
 ## Typical workflow
@@ -29,10 +31,15 @@ catches that; the audit catches everything else.
 
 ## Picking a smoke variant
 
-- **Web app**: `post-milestone-smoke-test.web.prompt.md`.
-- **Other surfaces** (CLI, API, mobile, daemon, …): no variant
-  exists yet — open a PR to add one, or open an issue if you'd
-  like the project to add it.
+- **Web app** (browser-driven flows):
+  `post-milestone-smoke-test.web.prompt.md`.
+- **HTTP API** (REST / GraphQL / RPC over HTTP):
+  `post-milestone-smoke-test.api.prompt.md`.
+- **CLI** (non-interactive binary or script):
+  `post-milestone-smoke-test.cli.prompt.md`.
+- **Other surfaces** (mobile UI, TUI, REPL, daemon /
+  background worker): no variant exists yet — open a PR to add
+  one, or open an issue if you'd like the project to add it.
 
 All variants extend `core/post-milestone-smoke-test.core.prompt.md`
 that holds the parts that don't change between mediums (milestone
@@ -87,6 +94,10 @@ Variant-specific (see each variant's Prerequisites section):
 
 - **Web**: browser-control MCP tool (Playwright MCP recommended),
   running dev server, seeded test accounts.
+- **API**: running API instance, `curl` / `httpie`, documented
+  test credentials (API key, bearer token, OAuth client, or
+  seeded user).
+- **CLI**: built / installed binary, documented test fixtures.
 
 ### Adding a new smoke variant
 
