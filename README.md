@@ -102,6 +102,55 @@ See [`MilestoneRelease/README.md`](MilestoneRelease/README.md) for
 the full workflow, how to pick an audit variant, and how to add a
 new one.
 
+### `PRWorkflow/`
+
+Pre-merge checks for a pull request branch.
+
+- `pre-pr-checklist.prompt.md` — runs the project's check suite,
+  scans the diff for things reviewers can't easily catch (leftover
+  debug, focus markers, secrets, unjustified suppressions, missing
+  tests), and drafts a PR body. Does not push or open the PR.
+
+See [`PRWorkflow/README.md`](PRWorkflow/README.md).
+
+### `Refactoring/`
+
+Read-only audits that surface refactor opportunities.
+
+- `duplicate-logic.prompt.md` — finds functions / modules /
+  components doing the same job under different names; clusters
+  and recommends a winner per cluster.
+- `dead-code-audit.prompt.md` — finds exports / components / env
+  vars / branches that aren't used. Classifies Hard / Likely /
+  Conditionally dead. Pairs with the project's static tool when
+  one is configured.
+
+See [`Refactoring/README.md`](Refactoring/README.md).
+
+### `DocsHygiene/`
+
+Audits that keep documentation honest.
+
+- `audit-claude-md.prompt.md` — audits the project's LLM
+  instruction files (vague rules, missing examples, drifted
+  compliance, mechanical-enforcement opportunities).
+- `doc-code-drift.prompt.md` — finds where READMEs / docs / inline
+  comments disagree with the actual code.
+
+See [`DocsHygiene/README.md`](DocsHygiene/README.md).
+
+### `Debugging/`
+
+Active-loop debugging prompts (different shape from the audit
+prompts elsewhere — these drive a workflow that converges on an
+answer).
+
+- `regression-bisect.prompt.md` — given last-known-good, symptom,
+  and a reproduction, drives `git bisect` to the breaking commit
+  and proposes a fix.
+
+See [`Debugging/README.md`](Debugging/README.md).
+
 ## Contributing
 
 Contributions are welcome — both new prompts and improvements to
