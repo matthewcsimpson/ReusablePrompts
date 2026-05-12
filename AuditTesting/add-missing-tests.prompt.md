@@ -66,10 +66,9 @@ proceed straight to writing.
   hooks, third-party SDKs — not the component's own state.
 - Assert on observable behaviour: return values, rendered output, calls
   made. Do not assert on internal state shape.
-- Honour the LLM instructions: TypeScript rules, import style, naming
-  rules (no single-letter variables, etc.), framework-specific
-  conventions (automatic JSX runtime, server vs. client components,
-  etc.).
+- Honour the LLM instructions: typing rules, import style, naming
+  rules (e.g. no single-letter variables), and any framework-specific
+  conventions the project documents.
 - No snapshot tests of UI trees. Snapshots are acceptable for stable
   structured data (normalised view-models, JSON responses) only.
 

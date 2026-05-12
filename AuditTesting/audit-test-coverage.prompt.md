@@ -66,19 +66,20 @@ swamp signal.
 
 Enumerate testable source files. "Testable" usually means:
 
-- Components / pages / views (anything with rendering logic).
-- Route handlers / controllers / API endpoints.
 - Business logic modules / services / use-cases.
+- Route handlers / controllers / API endpoints.
 - Utilities and pure helpers.
+- Components / pages / views (anything with rendering logic, for
+  UI codebases).
 - Auth, payment, and other security or money-handling code.
 
 Explicitly skip:
 
-- Type-only files (`*.types.ts`, `*.d.ts`).
-- Re-export barrels (`index.ts` that only re-exports).
+- Type-only files (`*.types.ts`, `*.d.ts`, `*.pyi`, etc.).
+- Re-export barrels (files that only re-export from other modules).
 - Generated code, vendored / third-party files.
 - Configuration files.
-- Storybook stories, fixtures, scripts, build helpers.
+- Stories, fixtures, scripts, build helpers.
 
 For each testable file, classify:
 
@@ -108,8 +109,9 @@ Rank gaps using these heuristics, from highest to lowest:
    Cheap, definite progress; surface them even when not critical.
 5. **Secondary features** — user-facing functionality outside the core
    flow.
-6. **Leaf UI** — presentational components with no logic. Lowest priority
-   unless they sit on a critical-flow page.
+6. **Display-only code** — leaf UI components, formatters, simple
+   serialisers, and other code with no logic of its own. Lowest
+   priority unless it sits on a critical-flow path.
 
 Within a band, prefer files that:
 - Have clear, named failure modes in the code (early returns, throws,
