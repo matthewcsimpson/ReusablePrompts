@@ -250,4 +250,7 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Work in progress. More prompt collections will be added over time.
+Stable at [v1.0.0](https://github.com/matthewcsimpson/ReusablePrompts/releases/tag/v1.0.0).
+New collections and stack variants continue to be added as new
+project shapes come up — see the per-folder READMEs for guidance
+on adding a variant.
