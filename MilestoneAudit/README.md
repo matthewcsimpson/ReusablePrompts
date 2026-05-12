@@ -12,7 +12,11 @@ the top of this folder; the shared scaffold lives in `core/`.
 | Step | Prompt | Scope |
 |---|---|---|
 | 1 | `post-milestone-audit.nextjs.prompt.md` | Next.js + TypeScript |
+| 1 | `post-milestone-audit.nestjs.prompt.md` | NestJS (backend TS services) |
 | 1 | `post-milestone-audit.python.prompt.md` | Python (FastAPI / Django / Flask / CLI / library) |
+| 1 | `post-milestone-audit.dotnet.prompt.md` | .NET / C# (ASP.NET Core, EF Core, worker services) |
+| 1 | `post-milestone-audit.react-native.prompt.md` | React Native / Expo |
+| 1 | `post-milestone-audit.terraform.prompt.md` | Terraform / OpenTofu (infrastructure-as-code) |
 | — | `core/post-milestone-audit.core.prompt.md` | Shared scaffold. Not invoked directly. |
 | 2 | `post-milestone-fix.prompt.md` | Stack-agnostic — reads the audit report and actions findings matching the triage labels and sections you supply. |
 
@@ -31,12 +35,22 @@ the top of this folder; the shared scaffold lives in `core/`.
 
 ## Picking an audit variant
 
-- **Next.js + TypeScript**: `post-milestone-audit.nextjs.prompt.md`.
-- **Python (FastAPI / Django / Flask / CLI / library)**:
+- **Next.js + TypeScript** (web front-end / SSR):
+  `post-milestone-audit.nextjs.prompt.md`.
+- **NestJS** (TypeScript backend):
+  `post-milestone-audit.nestjs.prompt.md`.
+- **Python** (FastAPI / Django / Flask / CLI / library):
   `post-milestone-audit.python.prompt.md`.
-- **Other stack (Go, Rust, Ruby, Java, …)**: copy the closest
-  variant, adapt the framework-specific sections, and open a PR
-  to add the new variant.
+- **.NET / C#** (ASP.NET Core, EF Core, worker services):
+  `post-milestone-audit.dotnet.prompt.md`.
+- **React Native / Expo** (mobile):
+  `post-milestone-audit.react-native.prompt.md`.
+- **Terraform / OpenTofu** (infrastructure-as-code):
+  `post-milestone-audit.terraform.prompt.md`.
+- **Other stack (Go, Rust, Ruby, Java, Salesforce, PHP /
+  WordPress, …)**: copy the closest variant, adapt the
+  framework-specific sections, and open a PR to add the new
+  variant.
 
 Both variants extend `core/post-milestone-audit.core.prompt.md`
 that holds the parts that don't change between stacks (audit-window

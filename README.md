@@ -81,12 +81,18 @@ workflow.
 ### `MilestoneSmoke/`
 
 Behavioural smoke-test prompts that run after a milestone tag is
-cut. Variants target different runtime surfaces (web, …). Run
-this before `MilestoneAudit/` so behavioural regressions surface
-before static drift.
+cut. Variants target different runtime surfaces. Run this before
+`MilestoneAudit/` so behavioural regressions surface before
+static drift.
 
 - `post-milestone-smoke-test.web.prompt.md` — drives the
-  milestone's flows through a browser MCP. Web apps only.
+  milestone's flows through a browser MCP. Web apps.
+- `post-milestone-smoke-test.api.prompt.md` — exercises HTTP
+  endpoints against a running API instance with `curl` /
+  `httpie`.
+- `post-milestone-smoke-test.cli.prompt.md` — invokes CLI
+  commands with concrete args; observes exit code / stdout /
+  stderr / side effects.
 - `core/post-milestone-smoke-test.core.prompt.md` — shared
   scaffold (not invoked directly).
 
@@ -96,12 +102,21 @@ See [`MilestoneSmoke/README.md`](MilestoneSmoke/README.md).
 
 Static-drift audit prompts plus the follow-up fix. Pair with
 `MilestoneSmoke/`. Filenames carry a stack tag (`.nextjs`,
-`.python`) when a prompt is tied to a particular stack.
+`.nestjs`, `.python`, `.dotnet`, `.react-native`, `.terraform`)
+when a prompt is tied to a particular stack.
 
-- `post-milestone-audit.nextjs.prompt.md` — audit variant for
-  Next.js + TypeScript projects.
-- `post-milestone-audit.python.prompt.md` — audit variant for
-  Python projects (FastAPI / Django / Flask / CLI / library).
+- `post-milestone-audit.nextjs.prompt.md` — Next.js +
+  TypeScript front-end / SSR.
+- `post-milestone-audit.nestjs.prompt.md` — NestJS backend
+  services.
+- `post-milestone-audit.python.prompt.md` — Python (FastAPI /
+  Django / Flask / CLI / library).
+- `post-milestone-audit.dotnet.prompt.md` — .NET / C# (ASP.NET
+  Core, EF Core, worker services).
+- `post-milestone-audit.react-native.prompt.md` — React Native
+  / Expo.
+- `post-milestone-audit.terraform.prompt.md` — Terraform /
+  OpenTofu infrastructure-as-code.
 - `core/post-milestone-audit.core.prompt.md` — shared scaffold
   (not invoked directly).
 - `post-milestone-fix.prompt.md` — actions the audit findings
