@@ -113,6 +113,22 @@ Pre-merge checks for a pull request branch.
 
 See [`PRWorkflow/README.md`](PRWorkflow/README.md).
 
+### `IssueWorkflow/`
+
+Issue-tracker maintenance. Filenames carry a platform tag
+(`.github`) — variants for other trackers (GitLab, Linear, Jira)
+would sit alongside.
+
+- `audit-duplicate-issues.core.prompt.md` — shared scaffold (not
+  invoked directly).
+- `audit-duplicate-issues.github.prompt.md` — GitHub variant.
+  Surveys open issues for duplicates, clusters them, classifies,
+  and recommends an action per cluster. Asks for the target
+  `OWNER/REPO` at the start of the run. Stops for confirmation
+  before any closure or edit.
+
+See [`IssueWorkflow/README.md`](IssueWorkflow/README.md).
+
 ### `Refactoring/`
 
 Read-only audits that surface refactor opportunities.
