@@ -188,7 +188,7 @@ existing ones.
   kebab-case (e.g. `audit-test-coverage.prompt.md`). Folder READMEs
   are plain `README.md`.
 - **Folder organisation.** Group prompts by workflow domain (e.g.
-  `AuditTesting/`, `MilestoneRelease/`), not by action verb. A new
+  `AuditTesting/`, `MilestoneAudit/`), not by action verb. A new
   workflow domain gets its own folder with a `README.md` that
   explains the workflow and links any companion prompts.
 - **Prompt structure.** Aim for the shape used by the existing
