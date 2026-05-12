@@ -76,6 +76,58 @@ findings.
 See [`MilestoneRelease/README.md`](MilestoneRelease/README.md) for
 the full workflow and adaptation notes.
 
+## Contributing
+
+Contributions are welcome — both new prompts and improvements to
+existing ones.
+
+### Conventions
+
+- **File naming.** Prompt files use `<name>.prompt.md` in
+  kebab-case (e.g. `audit-test-coverage.prompt.md`). Folder READMEs
+  are plain `README.md`.
+- **Folder organisation.** Group prompts by workflow domain (e.g.
+  `AuditTesting/`, `MilestoneRelease/`), not by action verb. A new
+  workflow domain gets its own folder with a `README.md` that
+  explains the workflow and links any companion prompts.
+- **Prompt structure.** Aim for the shape used by the existing
+  prompts: a short purpose statement, inputs the user must supply,
+  numbered steps, an output / report format, and a Constraints
+  section that names the failure modes the prompt is defending
+  against.
+- **Be project-agnostic.** Don't name a specific framework,
+  package manager, or repo unless the prompt is genuinely tied to
+  one. Reach for the project's `CLAUDE.md` / `AGENTS.md` /
+  `.cursor/rules/**` for project-specific rules at runtime instead
+  of hard-coding them.
+
+### Proposing a change
+
+1. Open an issue describing the prompt or change you want to make.
+   Quick agreement on scope up front saves rework.
+2. Fork the repo or create a feature branch
+   (`add-<thing>` / `improve-<thing>` / `docs-<thing>`).
+3. Make the change. If you're adding a new prompt, add or update the
+   folder `README.md` and the entry in the root `README.md` so it's
+   discoverable.
+4. Open a PR against `main` with a summary and a short test plan
+   (e.g. "ran against repo X, audit produced N findings, top-3
+   ranked first").
+5. The PR will be merged once the change is reviewed. `main` is
+   protected — PRs only, no direct pushes.
+
+### Reporting a prompt that didn't work
+
+If a prompt produced a bad result, open an issue with: the prompt
+file, the project you ran it against (or a description if private),
+the actual output, and what you expected. Concrete failure cases
+are the most useful contribution — they're what sharpens these
+prompts over time.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
+
 ## Status
 
 Work in progress. More prompt collections will be added over time.
