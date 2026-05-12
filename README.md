@@ -78,29 +78,39 @@ A pair of prompts for working on a repo's test suite.
 See [`AuditTesting/README.md`](AuditTesting/README.md) for the full
 workflow.
 
-### `MilestoneRelease/`
+### `MilestoneSmoke/`
 
-A milestone-release workflow: smoke test the shipped flows, audit
-the codebase for drift, then action the triaged findings. Some
-steps have framework-specific variants — filenames carry a scope
-tag (`.web`, `.nextjs`, `.python`) when a prompt is tied to a
-particular stack.
+Behavioural smoke-test prompts that run after a milestone tag is
+cut. Variants target different runtime surfaces (web, …). Run
+this before `MilestoneAudit/` so behavioural regressions surface
+before static drift.
 
 - `post-milestone-smoke-test.web.prompt.md` — drives the
   milestone's flows through a browser MCP. Web apps only.
-- `post-milestone-audit.core.prompt.md` — shared scaffold (not
-  invoked directly).
+- `core/post-milestone-smoke-test.core.prompt.md` — shared
+  scaffold (not invoked directly).
+
+See [`MilestoneSmoke/README.md`](MilestoneSmoke/README.md).
+
+### `MilestoneAudit/`
+
+Static-drift audit prompts plus the follow-up fix. Pair with
+`MilestoneSmoke/`. Filenames carry a stack tag (`.nextjs`,
+`.python`) when a prompt is tied to a particular stack.
+
 - `post-milestone-audit.nextjs.prompt.md` — audit variant for
   Next.js + TypeScript projects.
 - `post-milestone-audit.python.prompt.md` — audit variant for
   Python projects (FastAPI / Django / Flask / CLI / library).
+- `core/post-milestone-audit.core.prompt.md` — shared scaffold
+  (not invoked directly).
 - `post-milestone-fix.prompt.md` — actions the audit findings
   matching the labels and sections you specify. Commits locally
   only. Stack-agnostic.
 
-See [`MilestoneRelease/README.md`](MilestoneRelease/README.md) for
-the full workflow, how to pick an audit variant, and how to add a
-new one.
+See [`MilestoneAudit/README.md`](MilestoneAudit/README.md) for
+the full workflow, how to pick an audit variant, and how to add
+a new one.
 
 ### `PRWorkflow/`
 
@@ -119,13 +129,13 @@ Issue-tracker maintenance. Filenames carry a platform tag
 (`.github`) — variants for other trackers (GitLab, Linear, Jira)
 would sit alongside.
 
-- `audit-duplicate-issues.core.prompt.md` — shared scaffold (not
-  invoked directly).
 - `audit-duplicate-issues.github.prompt.md` — GitHub variant.
   Surveys open issues for duplicates, clusters them, classifies,
   and recommends an action per cluster. Asks for the target
   `OWNER/REPO` at the start of the run. Stops for confirmation
   before any closure or edit.
+- `core/audit-duplicate-issues.core.prompt.md` — shared scaffold
+  (not invoked directly).
 
 See [`IssueWorkflow/README.md`](IssueWorkflow/README.md).
 

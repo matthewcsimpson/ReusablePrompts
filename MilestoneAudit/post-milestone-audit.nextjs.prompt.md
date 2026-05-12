@@ -3,7 +3,7 @@
 Audit a Next.js (App Router) + TypeScript codebase after a milestone
 tag is cut.
 
-**This prompt extends [`post-milestone-audit.core.prompt.md`](./post-milestone-audit.core.prompt.md).**
+**This prompt extends [`core/post-milestone-audit.core.prompt.md`](./core/post-milestone-audit.core.prompt.md).**
 Read the core file first for the workflow shape, audit-window logic,
 convention-source discovery, delta logic, output format, and
 constraints. This file supplies the Next.js / TypeScript specifics
