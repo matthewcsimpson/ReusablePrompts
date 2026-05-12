@@ -93,6 +93,8 @@ static drift.
 - `post-milestone-smoke-test.cli.prompt.md` — invokes CLI
   commands with concrete args; observes exit code / stdout /
   stderr / side effects.
+- `post-milestone-smoke-test.ios.prompt.md` — drives an iOS
+  app through the iOS Simulator via Maestro or XCUITest.
 - `core/post-milestone-smoke-test.core.prompt.md` — shared
   scaffold (not invoked directly).
 
@@ -102,8 +104,8 @@ See [`MilestoneSmoke/README.md`](MilestoneSmoke/README.md).
 
 Static-drift audit prompts plus the follow-up fix. Pair with
 `MilestoneSmoke/`. Filenames carry a stack tag (`.nextjs`,
-`.nestjs`, `.python`, `.dotnet`, `.react-native`, `.terraform`)
-when a prompt is tied to a particular stack.
+`.nestjs`, `.python`, `.dotnet`, `.react-native`, `.swift`,
+`.terraform`) when a prompt is tied to a particular stack.
 
 - `post-milestone-audit.nextjs.prompt.md` — Next.js +
   TypeScript front-end / SSR.
@@ -114,7 +116,9 @@ when a prompt is tied to a particular stack.
 - `post-milestone-audit.dotnet.prompt.md` — .NET / C# (ASP.NET
   Core, EF Core, worker services).
 - `post-milestone-audit.react-native.prompt.md` — React Native
-  / Expo.
+  / Expo (cross-platform mobile, JS layer).
+- `post-milestone-audit.swift.prompt.md` — Swift / Xcode
+  (native iOS / macOS / watchOS / tvOS).
 - `post-milestone-audit.terraform.prompt.md` — Terraform /
   OpenTofu infrastructure-as-code.
 - `core/post-milestone-audit.core.prompt.md` — shared scaffold
