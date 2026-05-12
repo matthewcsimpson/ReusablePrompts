@@ -16,6 +16,7 @@ the top of this folder; the shared scaffold lives in `core/`.
 | 1 | `post-milestone-audit.python.prompt.md` | Python (FastAPI / Django / Flask / CLI / library) |
 | 1 | `post-milestone-audit.dotnet.prompt.md` | .NET / C# (ASP.NET Core, EF Core, worker services) |
 | 1 | `post-milestone-audit.react-native.prompt.md` | React Native / Expo |
+| 1 | `post-milestone-audit.swift.prompt.md` | Swift / Xcode (iOS / macOS / watchOS / tvOS) |
 | 1 | `post-milestone-audit.terraform.prompt.md` | Terraform / OpenTofu (infrastructure-as-code) |
 | — | `core/post-milestone-audit.core.prompt.md` | Shared scaffold. Not invoked directly. |
 | 2 | `post-milestone-fix.prompt.md` | Stack-agnostic — reads the audit report and actions findings matching the triage labels and sections you supply. |
@@ -43,8 +44,10 @@ the top of this folder; the shared scaffold lives in `core/`.
   `post-milestone-audit.python.prompt.md`.
 - **.NET / C#** (ASP.NET Core, EF Core, worker services):
   `post-milestone-audit.dotnet.prompt.md`.
-- **React Native / Expo** (mobile):
+- **React Native / Expo** (cross-platform mobile, JS layer):
   `post-milestone-audit.react-native.prompt.md`.
+- **Swift / Xcode** (native iOS / macOS / watchOS / tvOS):
+  `post-milestone-audit.swift.prompt.md`.
 - **Terraform / OpenTofu** (infrastructure-as-code):
   `post-milestone-audit.terraform.prompt.md`.
 - **Other stack (Go, Rust, Ruby, Java, Salesforce, PHP /
