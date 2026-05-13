@@ -131,6 +131,29 @@ See [`MilestoneAudit/README.md`](MilestoneAudit/README.md) for
 the full workflow, how to pick an audit variant, and how to add
 a new one.
 
+### `StackUpgrade/`
+
+Per-stack version-bump planners. Reads upstream release notes,
+scans the repo for affected patterns, surveys available codemods,
+and produces a risk-ranked migration plan. Pair with
+`MilestoneAudit/`'s `post-milestone-fix.prompt.md` to action the
+plan.
+
+- `stack-upgrade.nextjs.prompt.md` — Next.js version bumps.
+- `stack-upgrade.nestjs.prompt.md` — NestJS major upgrades.
+- `stack-upgrade.python.prompt.md` — Python language version
+  (3.x → 3.y).
+- `stack-upgrade.dotnet.prompt.md` — .NET TFM (6 → 8, 8 → 9, …).
+- `stack-upgrade.react-native.prompt.md` — React Native / Expo
+  SDK bumps.
+- `stack-upgrade.swift.prompt.md` — Swift / Xcode / iOS SDK.
+- `stack-upgrade.terraform.prompt.md` — Terraform / OpenTofu CLI
+  + major provider bumps.
+- `core/stack-upgrade.core.prompt.md` — shared scaffold (not
+  invoked directly).
+
+See [`StackUpgrade/README.md`](StackUpgrade/README.md).
+
 ### `PRWorkflow/`
 
 Pre-merge checks for a pull request branch.
@@ -141,6 +164,24 @@ Pre-merge checks for a pull request branch.
   tests), and drafts a PR body. Does not push or open the PR.
 
 See [`PRWorkflow/README.md`](PRWorkflow/README.md).
+
+### `DBMigrationReview/`
+
+Pre-merge safety review for database migration files. Catches
+unsafe-under-production-load operations: NOT NULL on a populated
+table, non-concurrent index on a hot table, FK without an index,
+renames that break a rolling deploy. Run on a PR branch before
+merge.
+
+- `db-migration-review.prisma.prompt.md` — Prisma migrations.
+- `db-migration-review.typeorm.prompt.md` — TypeORM migrations.
+- `db-migration-review.alembic.prompt.md` — Alembic migrations.
+- `db-migration-review.ef-core.prompt.md` — EF Core migrations.
+- `core/db-migration-review.core.prompt.md` — shared scaffold
+  (unsafe-operation catalogue, severity model, output format).
+  Not invoked directly.
+
+See [`DBMigrationReview/README.md`](DBMigrationReview/README.md).
 
 ### `IssueWorkflow/`
 
@@ -171,6 +212,35 @@ Read-only audits that surface refactor opportunities.
   one is configured.
 
 See [`Refactoring/README.md`](Refactoring/README.md).
+
+### `DependencyHygiene/`
+
+A bundled dependency audit — outdated versions, known
+vulnerabilities, unused / missing declarations, lockfile drift, and
+duplicate versions — in one prioritised report. Variants are
+ecosystem-specific because the commands and manifest shapes differ.
+
+- `dependency-hygiene.npm.prompt.md` — npm / pnpm / yarn.
+- `dependency-hygiene.python.prompt.md` — pip / uv / Poetry / pdm.
+- `dependency-hygiene.dotnet.prompt.md` — NuGet.
+- `dependency-hygiene.swift.prompt.md` — SPM + CocoaPods.
+- `dependency-hygiene.terraform.prompt.md` — provider / module
+  versions.
+- `core/dependency-hygiene.core.prompt.md` — shared scaffold (not
+  invoked directly).
+
+See [`DependencyHygiene/README.md`](DependencyHygiene/README.md).
+
+### `ObservabilityAudit/`
+
+Read-only audit of how the codebase logs, traces, and surfaces
+errors at runtime. Stack-agnostic — the questions (swallowed
+errors, missing correlation IDs, log-level mismatches, PII in
+logs, dishonest health checks) are universal.
+
+- `observability-audit.prompt.md` — single stack-agnostic prompt.
+
+See [`ObservabilityAudit/README.md`](ObservabilityAudit/README.md).
 
 ### `DocsHygiene/`
 
