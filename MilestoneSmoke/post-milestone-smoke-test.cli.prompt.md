@@ -1,3 +1,7 @@
+---
+description: Drive a CLI binary after a milestone tag is cut — invoke headline commands, observe exit code / stdout / stderr / side effects, write a pass/fail/blocked report.
+---
+
 # Post-milestone smoke test — CLI variant
 
 Drive a CLI binary after a milestone tag is cut. Invoke the

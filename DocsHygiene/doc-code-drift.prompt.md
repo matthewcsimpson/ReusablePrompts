@@ -1,3 +1,7 @@
+---
+description: Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
+---
+
 # Doc-code drift audit
 
 Find places where the project's documentation says one thing and

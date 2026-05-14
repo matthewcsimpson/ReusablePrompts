@@ -1,3 +1,8 @@
+---
+description: Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
+related: [dead-code-audit]
+---
+
 # Find duplicate logic
 
 Find functions, modules, or components that do the same job under

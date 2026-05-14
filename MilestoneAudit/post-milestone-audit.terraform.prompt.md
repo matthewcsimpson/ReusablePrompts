@@ -1,3 +1,8 @@
+---
+description: Audit a Terraform infrastructure-as-code repo after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — Terraform variant
 
 Audit a Terraform (infrastructure-as-code) repo after a milestone

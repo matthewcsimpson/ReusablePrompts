@@ -1,3 +1,7 @@
+---
+description: Read-only audit of how a codebase logs, traces, and surfaces errors — swallowed errors, missing correlation IDs, log-level mismatches, PII in logs, dishonest health checks.
+---
+
 # Observability audit
 
 Read-only audit of how the codebase logs, traces, and surfaces

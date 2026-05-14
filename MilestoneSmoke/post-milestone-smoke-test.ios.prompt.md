@@ -1,3 +1,7 @@
+---
+description: Drive an iOS app through the iOS Simulator after a milestone tag is cut — execute headline user flows, observe device log and screenshots, write a pass/fail/blocked report.
+---
+
 # Post-milestone smoke test — iOS variant
 
 Drive an iOS app through the iOS Simulator after a milestone tag

@@ -1,3 +1,7 @@
+---
+description: Before opening a pull request, run the project's check suite, scan the diff for things reviewers can't easily catch (debug code, secrets, missing tests), and draft a PR body.
+---
+
 # Pre-PR checklist
 
 Before opening a pull request, sanity-check the branch is ready to

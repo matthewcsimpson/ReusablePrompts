@@ -1,3 +1,7 @@
+---
+description: Audit a .NET / NuGet project for outdated versions, known vulnerabilities, unused or missing declarations, lockfile drift, and duplicate versions.
+---
+
 # Dependency hygiene — .NET variant
 
 Audit a .NET / C# project using NuGet.

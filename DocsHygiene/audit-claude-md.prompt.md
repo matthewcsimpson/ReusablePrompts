@@ -1,3 +1,7 @@
+---
+description: Audit the project's LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
+---
+
 # Audit CLAUDE.md (or equivalent)
 
 Read the project's LLM instruction files and audit them: which

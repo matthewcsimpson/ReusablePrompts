@@ -1,3 +1,8 @@
+---
+description: Audit a .NET / C# codebase after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance against documented rules.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — .NET / C# variant
 
 Audit a .NET (C#) codebase after a milestone tag is cut.

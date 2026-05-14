@@ -1,3 +1,8 @@
+---
+description: Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
+related: [add-missing-tests]
+---
+
 # Audit test coverage
 
 Survey a repository's test coverage from scratch, identify the most important
