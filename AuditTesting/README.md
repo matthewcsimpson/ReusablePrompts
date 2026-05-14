@@ -5,14 +5,14 @@ suite.
 
 | Prompt | Mode | What it does |
 |---|---|---|
-| `audit-test-coverage.prompt.md` | Read-only | Surveys the repo, classifies source files as Covered / Partial / Missing, and returns a ranked list of the top gaps with suggested cases. |
-| `add-missing-tests.prompt.md` | Writes code | Takes one target (file or feature) and writes tests for it, matching the project's existing conventions. Verifies green before reporting done. |
+| `test-coverage-audit.prompt.md` | Read-only | Surveys the repo, classifies source files as Covered / Partial / Missing, and returns a ranked list of the top gaps with suggested cases. |
+| `test-coverage-fix.prompt.md` | Writes code | Takes one target (file or feature) and writes tests for it, matching the project's existing conventions. Verifies green before reporting done. |
 
 ## Typical workflow
 
-1. Run `audit-test-coverage.prompt.md` against the repo.
+1. Run `test-coverage-audit.prompt.md` against the repo.
 2. Pick a target from the ranked list it returns.
-3. Hand that target to `add-missing-tests.prompt.md`.
+3. Hand that target to `test-coverage-fix.prompt.md`.
 4. Repeat from step 2 as long as the audit findings stay fresh.
 
 Each run is stateless — the audit makes no assumptions about prior runs

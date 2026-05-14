@@ -23,48 +23,88 @@ This file is generated from the prompts' YAML frontmatter by
 
 ### AuditTesting
 
-- **add-missing-tests** — Write missing tests for a single component, module, or feature, matching the project's existing test conventions.
-  Read: `AuditTesting/add-missing-tests.prompt.md`
-  Related: `audit-test-coverage`
-- **audit-test-coverage** — Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
-  Read: `AuditTesting/audit-test-coverage.prompt.md`
-  Related: `add-missing-tests`
+- **test-coverage-audit** — Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
+  Read: `AuditTesting/test-coverage-audit.prompt.md`
+  Related: `test-coverage-fix`
+- **test-coverage-fix** — Write missing tests for a single component, module, or feature, matching the project's existing test conventions.
+  Read: `AuditTesting/test-coverage-fix.prompt.md`
+  Related: `test-coverage-audit`
 
-### DBMigrationReview
+### DBMigrationAudit
 
-- **db-migration-review-alembic** — Pre-merge safety review for Alembic database migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
-  Read: `DBMigrationReview/db-migration-review.alembic.prompt.md`
-- **db-migration-review-ef-core** — Pre-merge safety review for Entity Framework Core migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
-  Read: `DBMigrationReview/db-migration-review.ef-core.prompt.md`
-- **db-migration-review-prisma** — Pre-merge safety review for Prisma Migrate migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
-  Read: `DBMigrationReview/db-migration-review.prisma.prompt.md`
-- **db-migration-review-typeorm** — Pre-merge safety review for TypeORM migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
-  Read: `DBMigrationReview/db-migration-review.typeorm.prompt.md`
+- **db-migration-audit-alembic** — Pre-merge safety audit for Alembic database migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
+  Read: `DBMigrationAudit/db-migration-audit.alembic.prompt.md`
+  Related: `db-migration-fix-alembic`
+- **db-migration-audit-ef-core** — Pre-merge safety audit for Entity Framework Core migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
+  Read: `DBMigrationAudit/db-migration-audit.ef-core.prompt.md`
+  Related: `db-migration-fix-ef-core`
+- **db-migration-audit-prisma** — Pre-merge safety audit for Prisma Migrate migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
+  Read: `DBMigrationAudit/db-migration-audit.prisma.prompt.md`
+  Related: `db-migration-fix-prisma`
+- **db-migration-audit-typeorm** — Pre-merge safety audit for TypeORM migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
+  Read: `DBMigrationAudit/db-migration-audit.typeorm.prompt.md`
+  Related: `db-migration-fix-typeorm`
+- **db-migration-fix-alembic** — Action findings from db-migration-audit-alembic. Edit Alembic migrations (CONCURRENTLY, splits, NOT VALID), verify via alembic upgrade --sql, commit per migration. Local commits only.
+  Read: `DBMigrationAudit/db-migration-fix.alembic.prompt.md`
+  Related: `db-migration-audit-alembic`
+- **db-migration-fix-ef-core** — Action findings from db-migration-audit-ef-core. Edit EF Core migrations (raw SQL for CONCURRENTLY, splits), verify via dotnet ef migrations script, commit per migration. Local commits only.
+  Read: `DBMigrationAudit/db-migration-fix.ef-core.prompt.md`
+  Related: `db-migration-audit-ef-core`
+- **db-migration-fix-prisma** — Action findings from db-migration-audit-prisma. Edit Prisma migration SQL (CONCURRENTLY, splits, RENAME COLUMN), verify via prisma migrate diff, commit per migration. Local commits only.
+  Read: `DBMigrationAudit/db-migration-fix.prisma.prompt.md`
+  Related: `db-migration-audit-prisma`
+- **db-migration-fix-typeorm** — Action findings from db-migration-audit-typeorm. Edit TypeORM migration classes (raw SQL, splits), verify via typeorm migration:show + tsc, commit per migration. Local commits only.
+  Read: `DBMigrationAudit/db-migration-fix.typeorm.prompt.md`
+  Related: `db-migration-audit-typeorm`
 
 ### Debugging
 
 - **regression-bisect** — Given last-known-good, symptom, and reproduction steps, drive a disciplined git bisect to the breaking commit and propose a fix.
   Read: `Debugging/regression-bisect.prompt.md`
 
-### DependencyHygiene
+### DependencyAudit
 
-- **dependency-hygiene-dotnet** — Audit a .NET / NuGet project for outdated versions, known vulnerabilities, unused or missing declarations, lockfile drift, and duplicate versions.
-  Read: `DependencyHygiene/dependency-hygiene.dotnet.prompt.md`
-- **dependency-hygiene-npm** — Audit a JavaScript / TypeScript project (npm, pnpm, or yarn) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
-  Read: `DependencyHygiene/dependency-hygiene.npm.prompt.md`
-- **dependency-hygiene-python** — Audit a Python project (pip, uv, Poetry, or pdm) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
-  Read: `DependencyHygiene/dependency-hygiene.python.prompt.md`
-- **dependency-hygiene-swift** — Audit a Swift / Xcode project (Swift Package Manager and/or CocoaPods) for outdated versions, vulnerabilities, unused or missing declarations, and duplicates.
-  Read: `DependencyHygiene/dependency-hygiene.swift.prompt.md`
-- **dependency-hygiene-terraform** — Audit a Terraform / OpenTofu codebase's provider, module, and backend dependencies for outdated versions, vulnerabilities, and duplicate version pins.
-  Read: `DependencyHygiene/dependency-hygiene.terraform.prompt.md`
+- **dependency-audit-dotnet** — Audit a .NET / NuGet project for outdated versions, known vulnerabilities, unused or missing declarations, lockfile drift, and duplicate versions.
+  Read: `DependencyAudit/dependency-audit.dotnet.prompt.md`
+  Related: `dependency-fix-dotnet`
+- **dependency-audit-npm** — Audit a JavaScript / TypeScript project (npm, pnpm, or yarn) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
+  Read: `DependencyAudit/dependency-audit.npm.prompt.md`
+  Related: `dependency-fix-npm`
+- **dependency-audit-python** — Audit a Python project (pip, uv, Poetry, or pdm) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
+  Read: `DependencyAudit/dependency-audit.python.prompt.md`
+  Related: `dependency-fix-python`
+- **dependency-audit-swift** — Audit a Swift / Xcode project (Swift Package Manager and/or CocoaPods) for outdated versions, vulnerabilities, unused or missing declarations, and duplicates.
+  Read: `DependencyAudit/dependency-audit.swift.prompt.md`
+  Related: `dependency-fix-swift`
+- **dependency-audit-terraform** — Audit a Terraform / OpenTofu codebase's provider, module, and backend dependencies for outdated versions, vulnerabilities, and duplicate version pins.
+  Read: `DependencyAudit/dependency-audit.terraform.prompt.md`
+  Related: `dependency-fix-terraform`
+- **dependency-fix-dotnet** — Action findings from dependency-audit-dotnet. Handles Central Package Management (Directory.Packages.props), per-project vs solution bumps, multi-target frameworks. Local commits only.
+  Read: `DependencyAudit/dependency-fix.dotnet.prompt.md`
+  Related: `dependency-audit-dotnet`
+- **dependency-fix-npm** — Action findings from dependency-audit-npm. Detects npm / pnpm / yarn (classic or berry), respects Corepack, uses overrides / resolutions for transitive vulns. Local commits only.
+  Read: `DependencyAudit/dependency-fix.npm.prompt.md`
+  Related: `dependency-audit-npm`
+- **dependency-fix-python** — Action findings from dependency-audit-python. Detects uv / Poetry / pdm / pip-tools, regenerates requirements*.txt from .in, handles dev / test / extras groups. Local commits only.
+  Read: `DependencyAudit/dependency-fix.python.prompt.md`
+  Related: `dependency-audit-python`
+- **dependency-fix-swift** — Action findings from dependency-audit-swift. Handles SPM (Package.resolved) and CocoaPods (Podfile.lock) in parallel, respects deployment-target pins. Local commits only.
+  Read: `DependencyAudit/dependency-fix.swift.prompt.md`
+  Related: `dependency-audit-swift`
+- **dependency-fix-terraform** — Action findings from dependency-audit-terraform. Bumps providers / modules / backends, multi-platform re-lock (darwin / linux), gates on terraform plan showing 0 resource changes. Local commits only.
+  Read: `DependencyAudit/dependency-fix.terraform.prompt.md`
+  Related: `dependency-audit-terraform`
 
 ### DocsHygiene
 
-- **audit-claude-md** — Audit the project's LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
-  Read: `DocsHygiene/audit-claude-md.prompt.md`
-- **doc-code-drift** — Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
-  Read: `DocsHygiene/doc-code-drift.prompt.md`
+- **agent-instructions-audit** — Audit the project's agent / LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
+  Read: `DocsHygiene/agent-instructions-audit.prompt.md`
+- **doc-code-drift-audit** — Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
+  Read: `DocsHygiene/doc-code-drift-audit.prompt.md`
+  Related: `doc-code-drift-fix`
+- **doc-code-drift-fix** — Action findings from doc-code-drift-audit. Update docs to match the code, verify links and snippets, commit per drift type. Local commits only.
+  Read: `DocsHygiene/doc-code-drift-fix.prompt.md`
+  Related: `doc-code-drift-audit`
 
 ### IssueWorkflow
 
@@ -123,16 +163,16 @@ This file is generated from the prompts' YAML frontmatter by
 
 - **dead-code-audit** — Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
   Read: `Refactoring/dead-code-audit.prompt.md`
-  Related: `dead-code-fix`, `duplicate-logic`
+  Related: `dead-code-fix`, `duplicate-logic-audit`
 - **dead-code-fix** — Action the in-scope findings from the most recent dead-code-audit report. Deletes dead code, verifies the build, commits locally per category. Does not push or open a PR.
   Read: `Refactoring/dead-code-fix.prompt.md`
   Related: `dead-code-audit`
-- **duplicate-code-fix** — Action user-selected clusters from the most recent duplicate-logic report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
-  Read: `Refactoring/duplicate-code-fix.prompt.md`
-  Related: `duplicate-logic`
-- **duplicate-logic** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
-  Read: `Refactoring/duplicate-logic.prompt.md`
-  Related: `duplicate-code-fix`, `dead-code-audit`
+- **duplicate-logic-audit** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
+  Read: `Refactoring/duplicate-logic-audit.prompt.md`
+  Related: `duplicate-logic-fix`, `dead-code-audit`
+- **duplicate-logic-fix** — Action user-selected clusters from the most recent duplicate-logic-audit report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
+  Read: `Refactoring/duplicate-logic-fix.prompt.md`
+  Related: `duplicate-logic-audit`
 
 ### StackUpgrade
 

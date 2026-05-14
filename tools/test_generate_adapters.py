@@ -73,10 +73,25 @@ class ParseFrontmatterTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             gen.parse_frontmatter(text)
 
+    def test_real_prompt_frontmatter_parses(self) -> None:
+        """Smoke-test parse_frontmatter against a real on-disk prompt
+        file from one of the new families. Catches future frontmatter
+        drift (e.g. accidentally introducing a block scalar or an
+        unsupported construct) without needing a full --check run.
+        """
+        target = gen.REPO_ROOT / "DependencyAudit" / "dependency-fix.npm.prompt.md"
+        self.assertTrue(target.exists(), f"missing prompt fixture: {target}")
+        fm = gen.parse_frontmatter(target.read_text(encoding="utf-8"))
+        self.assertIn("description", fm)
+        self.assertIsInstance(fm["description"], str)
+        # description is bounded by the same limit the generator enforces
+        self.assertLessEqual(len(fm["description"]), gen.DESC_MAX)
+        self.assertEqual(fm.get("related"), ["dependency-audit-npm"])
+
 
 class SlugAndVariantTests(unittest.TestCase):
     def test_slugify_single_variant(self) -> None:
-        self.assertEqual(gen.slugify("audit-test-coverage.prompt.md"), "audit-test-coverage")
+        self.assertEqual(gen.slugify("test-coverage-audit.prompt.md"), "test-coverage-audit")
 
     def test_slugify_dotted_variant(self) -> None:
         self.assertEqual(
@@ -86,8 +101,8 @@ class SlugAndVariantTests(unittest.TestCase):
 
     def test_derive_family_variant_single(self) -> None:
         self.assertEqual(
-            gen.derive_family_variant("audit-test-coverage.prompt.md"),
-            ("audit-test-coverage", ""),
+            gen.derive_family_variant("test-coverage-audit.prompt.md"),
+            ("test-coverage-audit", ""),
         )
 
     def test_derive_family_variant_multi(self) -> None:
@@ -114,14 +129,42 @@ class GroupingTests(unittest.TestCase):
 
     def test_group_by_family_sorts_variants(self) -> None:
         prompts = [
-            self._p("dependency-hygiene-python", "DependencyHygiene", family="dependency-hygiene", variant="python"),
-            self._p("dependency-hygiene-npm", "DependencyHygiene", family="dependency-hygiene", variant="npm"),
+            self._p("dependency-audit-python", "DependencyAudit", family="dependency-audit", variant="python"),
+            self._p("dependency-audit-npm", "DependencyAudit", family="dependency-audit", variant="npm"),
         ]
         grouped = gen.group_by_family(prompts)
         self.assertEqual(
-            [p.variant for p in grouped["dependency-hygiene"]],
+            [p.variant for p in grouped["dependency-audit"]],
             ["npm", "python"],
         )
+
+    def test_audit_fix_pair_are_separate_families_same_collection(self) -> None:
+        """An audit family and its matching fix family share a collection
+        folder but render as two separate families in the router catalog.
+
+        Verifies the audit/fix naming convention is parsed correctly:
+        `dependency-audit.npm.prompt.md` and `dependency-fix.npm.prompt.md`
+        live in DependencyAudit/ together but group_by_family must keep
+        them in separate buckets.
+        """
+        prompts = [
+            self._p("dependency-audit-npm", "DependencyAudit", family="dependency-audit", variant="npm"),
+            self._p("dependency-audit-python", "DependencyAudit", family="dependency-audit", variant="python"),
+            self._p("dependency-fix-npm", "DependencyAudit", family="dependency-fix", variant="npm"),
+            self._p("dependency-fix-python", "DependencyAudit", family="dependency-fix", variant="python"),
+        ]
+        grouped = gen.group_by_family(prompts)
+        self.assertEqual(set(grouped.keys()), {"dependency-audit", "dependency-fix"})
+        self.assertEqual(
+            [p.variant for p in grouped["dependency-audit"]], ["npm", "python"]
+        )
+        self.assertEqual(
+            [p.variant for p in grouped["dependency-fix"]], ["npm", "python"]
+        )
+
+        by_collection = gen.group_by_collection(prompts)
+        self.assertEqual(set(by_collection.keys()), {"DependencyAudit"})
+        self.assertEqual(len(by_collection["DependencyAudit"]), 4)
 
     def test_group_by_collection_sorts_slugs(self) -> None:
         prompts = [
@@ -136,11 +179,11 @@ class CodexAgentsMergeTests(unittest.TestCase):
     def _prompts(self) -> list[gen.Prompt]:
         return [
             gen.Prompt(
-                slug="audit-test-coverage",
+                slug="test-coverage-audit",
                 collection="AuditTesting",
-                rel_path="AuditTesting/audit-test-coverage.prompt.md",
+                rel_path="AuditTesting/test-coverage-audit.prompt.md",
                 description="Audit test coverage.",
-                family="audit-test-coverage",
+                family="test-coverage-audit",
             ),
         ]
 
@@ -151,7 +194,7 @@ class CodexAgentsMergeTests(unittest.TestCase):
             content = target.read_text()
             self.assertIn(gen.GLOBAL_MARKER_BEGIN, content)
             self.assertIn(gen.GLOBAL_MARKER_END, content)
-            self.assertIn("audit-test-coverage", content)
+            self.assertIn("test-coverage-audit", content)
 
     def test_replaces_existing_managed_section(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -167,7 +210,7 @@ class CodexAgentsMergeTests(unittest.TestCase):
             self.assertIn("user epilogue", content)
             self.assertNotIn("stale", content)
             self.assertEqual(content.count(gen.GLOBAL_MARKER_BEGIN), 1)
-            self.assertIn("audit-test-coverage", content)
+            self.assertIn("test-coverage-audit", content)
 
     def test_appends_when_markers_absent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -183,11 +226,11 @@ class InstallProjectTests(unittest.TestCase):
     def _prompts(self) -> list[gen.Prompt]:
         return [
             gen.Prompt(
-                slug="audit-test-coverage",
+                slug="test-coverage-audit",
                 collection="AuditTesting",
-                rel_path="AuditTesting/audit-test-coverage.prompt.md",
+                rel_path="AuditTesting/test-coverage-audit.prompt.md",
                 description="Audit test coverage.",
-                family="audit-test-coverage",
+                family="test-coverage-audit",
             ),
         ]
 
@@ -201,7 +244,7 @@ class InstallProjectTests(unittest.TestCase):
             self.assertTrue(cursor.exists())
             self.assertTrue(copilot.exists())
             expected_path_fragment = str(
-                gen.REPO_ROOT.resolve() / "AuditTesting" / "audit-test-coverage.prompt.md"
+                gen.REPO_ROOT.resolve() / "AuditTesting" / "test-coverage-audit.prompt.md"
             )
             for f in (cursor, copilot):
                 content = f.read_text()

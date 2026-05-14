@@ -53,28 +53,26 @@ summarise, paraphrase, or skip steps unless the playbook itself says to.
 
 ## Catalog — single-variant playbooks (dispatch directly)
 
-- **`add-missing-tests`** — Write missing tests for a single component, module, or feature, matching the project's existing test conventions.
-  File: `../../AuditTesting/add-missing-tests.prompt.md`
-  Related: `audit-test-coverage`
-- **`audit-claude-md`** — Audit the project's LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
-  File: `../../DocsHygiene/audit-claude-md.prompt.md`
-- **`audit-test-coverage`** — Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
-  File: `../../AuditTesting/audit-test-coverage.prompt.md`
-  Related: `add-missing-tests`
+- **`agent-instructions-audit`** — Audit the project's agent / LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
+  File: `../../DocsHygiene/agent-instructions-audit.prompt.md`
 - **`dead-code-audit`** — Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
   File: `../../Refactoring/dead-code-audit.prompt.md`
-  Related: `dead-code-fix`, `duplicate-logic`
+  Related: `dead-code-fix`, `duplicate-logic-audit`
 - **`dead-code-fix`** — Action the in-scope findings from the most recent dead-code-audit report. Deletes dead code, verifies the build, commits locally per category. Does not push or open a PR.
   File: `../../Refactoring/dead-code-fix.prompt.md`
   Related: `dead-code-audit`
-- **`doc-code-drift`** — Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
-  File: `../../DocsHygiene/doc-code-drift.prompt.md`
-- **`duplicate-code-fix`** — Action user-selected clusters from the most recent duplicate-logic report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
-  File: `../../Refactoring/duplicate-code-fix.prompt.md`
-  Related: `duplicate-logic`
-- **`duplicate-logic`** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
-  File: `../../Refactoring/duplicate-logic.prompt.md`
-  Related: `duplicate-code-fix`, `dead-code-audit`
+- **`doc-code-drift-audit`** — Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
+  File: `../../DocsHygiene/doc-code-drift-audit.prompt.md`
+  Related: `doc-code-drift-fix`
+- **`doc-code-drift-fix`** — Action findings from doc-code-drift-audit. Update docs to match the code, verify links and snippets, commit per drift type. Local commits only.
+  File: `../../DocsHygiene/doc-code-drift-fix.prompt.md`
+  Related: `doc-code-drift-audit`
+- **`duplicate-logic-audit`** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
+  File: `../../Refactoring/duplicate-logic-audit.prompt.md`
+  Related: `duplicate-logic-fix`, `dead-code-audit`
+- **`duplicate-logic-fix`** — Action user-selected clusters from the most recent duplicate-logic-audit report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
+  File: `../../Refactoring/duplicate-logic-fix.prompt.md`
+  Related: `duplicate-logic-audit`
 - **`observability-audit`** — Read-only audit of how a codebase logs, traces, and surfaces errors — swallowed errors, missing correlation IDs, log-level mismatches, PII in logs, dishonest health checks.
   File: `../../ObservabilityAudit/observability-audit.prompt.md`
 - **`post-milestone-fix`** — Action the in-scope findings from the most recent post-milestone audit report. Commits locally; does not push or open a PR.
@@ -84,6 +82,12 @@ summarise, paraphrase, or skip steps unless the playbook itself says to.
   File: `../../PRWorkflow/pre-pr-checklist.prompt.md`
 - **`regression-bisect`** — Given last-known-good, symptom, and reproduction steps, drive a disciplined git bisect to the breaking commit and propose a fix.
   File: `../../Debugging/regression-bisect.prompt.md`
+- **`test-coverage-audit`** — Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
+  File: `../../AuditTesting/test-coverage-audit.prompt.md`
+  Related: `test-coverage-fix`
+- **`test-coverage-fix`** — Write missing tests for a single component, module, or feature, matching the project's existing test conventions.
+  File: `../../AuditTesting/test-coverage-fix.prompt.md`
+  Related: `test-coverage-audit`
 
 ## Catalog — multi-variant collections (detect stack, then dispatch)
 
@@ -95,42 +99,87 @@ Variants:
   File: `../../IssueWorkflow/audit-duplicate-issues.github.prompt.md`
   Detect: `.github/` directory, `gh` CLI authenticated for an `origin` remote on github.com
 
-### `db-migration-review`
+### `db-migration-audit`
 
 Variants:
 
-- `db-migration-review-alembic` — Alembic (Python + SQLAlchemy migrations)
-  File: `../../DBMigrationReview/db-migration-review.alembic.prompt.md`
+- `db-migration-audit-alembic` — Alembic (Python + SQLAlchemy migrations)
+  File: `../../DBMigrationAudit/db-migration-audit.alembic.prompt.md`
   Detect: `alembic.ini`, `alembic/` directory
-- `db-migration-review-ef-core` — Entity Framework Core (.NET)
-  File: `../../DBMigrationReview/db-migration-review.ef-core.prompt.md`
+- `db-migration-audit-ef-core` — Entity Framework Core (.NET)
+  File: `../../DBMigrationAudit/db-migration-audit.ef-core.prompt.md`
   Detect: `Microsoft.EntityFrameworkCore*` in a `*.csproj`, `Migrations/` folder under a .NET project
-- `db-migration-review-prisma` — Prisma
-  File: `../../DBMigrationReview/db-migration-review.prisma.prompt.md`
+- `db-migration-audit-prisma` — Prisma
+  File: `../../DBMigrationAudit/db-migration-audit.prisma.prompt.md`
   Detect: `prisma/schema.prisma`, `prisma` in `package.json`
-- `db-migration-review-typeorm` — TypeORM
-  File: `../../DBMigrationReview/db-migration-review.typeorm.prompt.md`
+- `db-migration-audit-typeorm` — TypeORM
+  File: `../../DBMigrationAudit/db-migration-audit.typeorm.prompt.md`
   Detect: `typeorm` in `package.json`, `ormconfig.{js,json,ts}`
 
-### `dependency-hygiene`
+Related across the family: `db-migration-fix-alembic`
+
+### `db-migration-fix`
 
 Variants:
 
-- `dependency-hygiene-dotnet` — .NET / C#
-  File: `../../DependencyHygiene/dependency-hygiene.dotnet.prompt.md`
+- `db-migration-fix-alembic` — Alembic (Python + SQLAlchemy migrations)
+  File: `../../DBMigrationAudit/db-migration-fix.alembic.prompt.md`
+  Detect: `alembic.ini`, `alembic/` directory
+- `db-migration-fix-ef-core` — Entity Framework Core (.NET)
+  File: `../../DBMigrationAudit/db-migration-fix.ef-core.prompt.md`
+  Detect: `Microsoft.EntityFrameworkCore*` in a `*.csproj`, `Migrations/` folder under a .NET project
+- `db-migration-fix-prisma` — Prisma
+  File: `../../DBMigrationAudit/db-migration-fix.prisma.prompt.md`
+  Detect: `prisma/schema.prisma`, `prisma` in `package.json`
+- `db-migration-fix-typeorm` — TypeORM
+  File: `../../DBMigrationAudit/db-migration-fix.typeorm.prompt.md`
+  Detect: `typeorm` in `package.json`, `ormconfig.{js,json,ts}`
+
+Related across the family: `db-migration-audit-alembic`
+
+### `dependency-audit`
+
+Variants:
+
+- `dependency-audit-dotnet` — .NET / C#
+  File: `../../DependencyAudit/dependency-audit.dotnet.prompt.md`
   Detect: `*.csproj`, `*.sln`, `global.json`, `Directory.Packages.props`
-- `dependency-hygiene-npm` — JavaScript / TypeScript (npm / pnpm / yarn)
-  File: `../../DependencyHygiene/dependency-hygiene.npm.prompt.md`
+- `dependency-audit-npm` — JavaScript / TypeScript (npm / pnpm / yarn)
+  File: `../../DependencyAudit/dependency-audit.npm.prompt.md`
   Detect: `package.json` *and* no Next.js / NestJS / React-Native indicators
-- `dependency-hygiene-python` — Python
-  File: `../../DependencyHygiene/dependency-hygiene.python.prompt.md`
+- `dependency-audit-python` — Python
+  File: `../../DependencyAudit/dependency-audit.python.prompt.md`
   Detect: `pyproject.toml`, `requirements.txt`, `Pipfile`, `setup.py`
-- `dependency-hygiene-swift` — Swift / iOS / macOS
-  File: `../../DependencyHygiene/dependency-hygiene.swift.prompt.md`
+- `dependency-audit-swift` — Swift / iOS / macOS
+  File: `../../DependencyAudit/dependency-audit.swift.prompt.md`
   Detect: `Package.swift`, `*.xcodeproj/`, `*.xcworkspace/`
-- `dependency-hygiene-terraform` — Terraform / OpenTofu
-  File: `../../DependencyHygiene/dependency-hygiene.terraform.prompt.md`
+- `dependency-audit-terraform` — Terraform / OpenTofu
+  File: `../../DependencyAudit/dependency-audit.terraform.prompt.md`
   Detect: `*.tf`, `*.tofu`
+
+Related across the family: `dependency-fix-dotnet`
+
+### `dependency-fix`
+
+Variants:
+
+- `dependency-fix-dotnet` — .NET / C#
+  File: `../../DependencyAudit/dependency-fix.dotnet.prompt.md`
+  Detect: `*.csproj`, `*.sln`, `global.json`, `Directory.Packages.props`
+- `dependency-fix-npm` — JavaScript / TypeScript (npm / pnpm / yarn)
+  File: `../../DependencyAudit/dependency-fix.npm.prompt.md`
+  Detect: `package.json` *and* no Next.js / NestJS / React-Native indicators
+- `dependency-fix-python` — Python
+  File: `../../DependencyAudit/dependency-fix.python.prompt.md`
+  Detect: `pyproject.toml`, `requirements.txt`, `Pipfile`, `setup.py`
+- `dependency-fix-swift` — Swift / iOS / macOS
+  File: `../../DependencyAudit/dependency-fix.swift.prompt.md`
+  Detect: `Package.swift`, `*.xcodeproj/`, `*.xcworkspace/`
+- `dependency-fix-terraform` — Terraform / OpenTofu
+  File: `../../DependencyAudit/dependency-fix.terraform.prompt.md`
+  Detect: `*.tf`, `*.tofu`
+
+Related across the family: `dependency-audit-dotnet`
 
 ### `post-milestone-audit`
 
