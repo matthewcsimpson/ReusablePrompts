@@ -9,7 +9,7 @@ README explaining what's inside and how the prompts there fit together.
 ## Invocation
 
 The canonical prompts are plain markdown files under each collection
-folder (e.g. `AuditTesting/audit-test-coverage.prompt.md`). A
+folder (e.g. `AuditTesting/test-coverage-audit.prompt.md`). A
 generator emits a single `/playbook` router slash command for each
 supported tool — type the slug, the router dispatches.
 
@@ -19,7 +19,7 @@ supported tool — type the slug, the router dispatches.
 /playbook --help              # short usage + slug list
 ```
 
-For multi-variant families (e.g. `dependency-hygiene` has -dotnet /
+For multi-variant families (e.g. `dependency-audit` has -dotnet /
 -npm / -python / -swift / -terraform variants), pass just the family
 name. The agent inspects the working directory to pick the matching
 stack; if it's ambiguous, it asks before running.
@@ -58,19 +58,19 @@ After `--install-global`, from any project:
 ```
 /playbook --list                              # see every available playbook
 /playbook --help                              # short usage
-/playbook audit-test-coverage
-/playbook add-missing-tests for the api routes
-/playbook dependency-hygiene
+/playbook test-coverage-audit
+/playbook test-coverage-fix for the api routes
+/playbook dependency-audit
 /playbook stack-upgrade-nextjs
 ```
 
 - **Discovery** — `/playbook --list` prints the full catalog with
   descriptions; `/playbook --help` (or `/playbook` with no slug) prints
   short usage + the slug list.
-- **Exact slug** (`audit-test-coverage`, `dependency-hygiene-npm`,
-  `db-migration-review-prisma`, …) → dispatches directly.
-- **Family name** (`dependency-hygiene`, `stack-upgrade`,
-  `db-migration-review`, `post-milestone-audit`) → Claude detects the
+- **Exact slug** (`test-coverage-audit`, `dependency-audit-npm`,
+  `db-migration-audit-prisma`, …) → dispatches directly.
+- **Family name** (`dependency-audit`, `stack-upgrade`,
+  `db-migration-audit`, `post-milestone-audit`) → Claude detects the
   stack from the working directory and runs the matching variant.
 - **Smoke-test family** (`post-milestone-smoke-test`) → can't be
   detected from the file tree; Claude asks which artifact you shipped
@@ -84,8 +84,8 @@ this repo — `.claude/commands/playbook.md` is checked in.
 ### Codex CLI
 
 ```
-/prompts:playbook audit-test-coverage
-/prompts:playbook dependency-hygiene
+/prompts:playbook test-coverage-audit
+/prompts:playbook dependency-audit
 ```
 
 The `/prompts:` prefix is Codex's namespace for user prompts —
@@ -93,7 +93,7 @@ mandatory, not optional. Same dispatch rules as above.
 
 If your Codex version doesn't read `~/.codex/prompts/`, fall back to
 the project-local `AGENTS.md` catalog (auto-read when Codex launches
-in this directory) and ask by name: "run the `audit-test-coverage`
+in this directory) and ask by name: "run the `test-coverage-audit`
 playbook".
 
 ### Cursor
@@ -109,8 +109,8 @@ setup, from the Cursor chat panel:
 
 ```
 /playbook --list
-/playbook audit-test-coverage
-/playbook dependency-hygiene
+/playbook test-coverage-audit
+/playbook dependency-audit
 ```
 
 That works because the router's relative paths
@@ -158,8 +158,8 @@ That writes `<target>/.github/prompts/playbook.prompt.md` with
 absolute paths back to this repo. Then in Copilot Chat:
 
 ```
-/playbook audit-test-coverage
-/playbook dependency-hygiene
+/playbook test-coverage-audit
+/playbook dependency-audit
 ```
 
 `--install-project` deliberately does **not** touch
@@ -198,14 +198,14 @@ Codex-specific quirk, please file an issue.
 These playbooks are deliberately thorough — they read across a repo,
 chase references, and produce structured reports. Expect them to be
 **token-heavy** compared to a one-shot prompt. A full
-`post-milestone-audit`, `dependency-hygiene`, or `stack-upgrade` run
+`post-milestone-audit`, `dependency-audit`, or `stack-upgrade` run
 on a non-trivial repo can consume a large fraction of a context
 window and (on metered plans) a non-trivial chunk of usage.
 
 Practical tips to keep the cost in check:
 
 - **Scope the run.** Pass a target ("audit just `src/api/`",
-  "dependency-hygiene for the `web/` workspace only") instead of
+  "dependency-audit for the `web/` workspace only") instead of
   letting the prompt sweep the whole repo.
 - **Run audits before fixes.** Read-only audits are cheaper than the
   follow-up fix pass — review the audit first, then action only the
@@ -213,7 +213,7 @@ Practical tips to keep the cost in check:
 - **Prefer the smallest model that works.** Many of the read-only
   audits work well on a mid-tier model; reserve the top tier for the
   prompts that need deeper reasoning (e.g. `regression-bisect`,
-  `duplicate-logic`).
+  `duplicate-logic-audit`).
 - **Watch the context window.** On very large repos, expect to
   `/compact` (or the equivalent) once or twice through a long audit.
 
@@ -242,9 +242,9 @@ code.
 
 A pair of prompts for working on a repo's test suite.
 
-- `audit-test-coverage.prompt.md` — read-only survey that ranks the
+- `test-coverage-audit.prompt.md` — read-only survey that ranks the
   most important coverage gaps and suggests cases for each.
-- `add-missing-tests.prompt.md` — takes one target from the audit (or
+- `test-coverage-fix.prompt.md` — takes one target from the audit (or
   one you name directly) and writes tests for it, matching the
   project's existing conventions.
 
@@ -338,23 +338,38 @@ Pre-merge checks for a pull request branch.
 
 See [`PRWorkflow/README.md`](PRWorkflow/README.md).
 
-### `DBMigrationReview/`
+### `DBMigrationAudit/`
 
-Pre-merge safety review for database migration files. Catches
+Pre-merge safety audit for database migration files, paired with
+fix variants that action the audit findings. Catches
 unsafe-under-production-load operations: NOT NULL on a populated
 table, non-concurrent index on a hot table, FK without an index,
-renames that break a rolling deploy. Run on a PR branch before
-merge.
+renames that break a rolling deploy.
 
-- `db-migration-review.prisma.prompt.md` — Prisma migrations.
-- `db-migration-review.typeorm.prompt.md` — TypeORM migrations.
-- `db-migration-review.alembic.prompt.md` — Alembic migrations.
-- `db-migration-review.ef-core.prompt.md` — EF Core migrations.
-- `core/db-migration-review.core.prompt.md` — shared scaffold
-  (unsafe-operation catalogue, severity model, output format).
-  Not invoked directly.
+Audits:
 
-See [`DBMigrationReview/README.md`](DBMigrationReview/README.md).
+- `db-migration-audit.prisma.prompt.md` — Prisma migrations.
+- `db-migration-audit.typeorm.prompt.md` — TypeORM migrations.
+- `db-migration-audit.alembic.prompt.md` — Alembic migrations.
+- `db-migration-audit.ef-core.prompt.md` — EF Core migrations.
+
+Fixes (`db-migration-fix-<orm>`) action audit findings in the same
+migration files — add `CONCURRENTLY`, split schema+backfill+NOT-NULL
+into three migrations, replace `DROP+ADD` rename with `RENAME COLUMN`,
+etc. Verify via the ORM's dry-run / script command, commit per
+migration, local only.
+
+- `db-migration-fix.prisma.prompt.md`
+- `db-migration-fix.typeorm.prompt.md`
+- `db-migration-fix.alembic.prompt.md`
+- `db-migration-fix.ef-core.prompt.md`
+
+Shared cores (`core/db-migration-audit.core.prompt.md`,
+`core/db-migration-fix.core.prompt.md`) hold the unsafe-operation
+catalogue, severity model, edit catalogue, and commit discipline.
+Not invoked directly.
+
+See [`DBMigrationAudit/README.md`](DBMigrationAudit/README.md).
 
 ### `IssueWorkflow/`
 
@@ -384,33 +399,50 @@ narrow-scope fix prompts that action the findings.
 - `dead-code-fix.prompt.md` — actions the in-scope findings from
   the dead-code audit. Defaults to `Hard dead` only; verifies the
   build after each deletion. Commits locally; does not push.
-- `duplicate-logic.prompt.md` — finds functions / modules /
+- `duplicate-logic-audit.prompt.md` — finds functions / modules /
   components doing the same job under different names; clusters
   and recommends a winner per cluster.
-- `duplicate-code-fix.prompt.md` — actions user-selected clusters
-  from the duplicate-logic report. Defaults to `risk:low` and asks
+- `duplicate-logic-fix.prompt.md` — actions user-selected clusters
+  from the duplicate-logic-audit report. Defaults to `risk:low` and asks
   which to action; verifies the build between each cluster.
   Commits locally; does not push.
 
 See [`Refactoring/README.md`](Refactoring/README.md).
 
-### `DependencyHygiene/`
+### `DependencyAudit/`
 
 A bundled dependency audit — outdated versions, known
 vulnerabilities, unused / missing declarations, lockfile drift, and
-duplicate versions — in one prioritised report. Variants are
+duplicate versions — in one prioritised report. Paired with fix
+variants that action the audit per category (vuln fixes, patch /
+minor / major bumps, removals, lockfile re-resolution). Variants are
 ecosystem-specific because the commands and manifest shapes differ.
 
-- `dependency-hygiene.npm.prompt.md` — npm / pnpm / yarn.
-- `dependency-hygiene.python.prompt.md` — pip / uv / Poetry / pdm.
-- `dependency-hygiene.dotnet.prompt.md` — NuGet.
-- `dependency-hygiene.swift.prompt.md` — SPM + CocoaPods.
-- `dependency-hygiene.terraform.prompt.md` — provider / module
-  versions.
-- `core/dependency-hygiene.core.prompt.md` — shared scaffold (not
-  invoked directly).
+Audits:
 
-See [`DependencyHygiene/README.md`](DependencyHygiene/README.md).
+- `dependency-audit.npm.prompt.md` — npm / pnpm / yarn.
+- `dependency-audit.python.prompt.md` — pip / uv / Poetry / pdm.
+- `dependency-audit.dotnet.prompt.md` — NuGet.
+- `dependency-audit.swift.prompt.md` — SPM + CocoaPods.
+- `dependency-audit.terraform.prompt.md` — provider / module
+  versions.
+
+Fixes (`dependency-fix-<ecosystem>`) default to `vulnerable` +
+`outdated-patch` + lockfile-drift; majors are opt-in and isolated
+per commit. Verify build + tests between each category, local
+commits only.
+
+- `dependency-fix.npm.prompt.md`
+- `dependency-fix.python.prompt.md`
+- `dependency-fix.dotnet.prompt.md`
+- `dependency-fix.swift.prompt.md`
+- `dependency-fix.terraform.prompt.md`
+
+Shared cores (`core/dependency-audit.core.prompt.md`,
+`core/dependency-fix.core.prompt.md`) hold the audit framework, edit
+catalogue, and constraints. Not invoked directly.
+
+See [`DependencyAudit/README.md`](DependencyAudit/README.md).
 
 ### `ObservabilityAudit/`
 
@@ -427,11 +459,17 @@ See [`ObservabilityAudit/README.md`](ObservabilityAudit/README.md).
 
 Audits that keep documentation honest.
 
-- `audit-claude-md.prompt.md` — audits the project's LLM
-  instruction files (vague rules, missing examples, drifted
-  compliance, mechanical-enforcement opportunities).
-- `doc-code-drift.prompt.md` — finds where READMEs / docs / inline
+- `agent-instructions-audit.prompt.md` — auto-detects every agent /
+  LLM instruction file in the repo (CLAUDE.md, AGENTS.md, Cursor
+  rules, Copilot instructions, nested variants) and audits them all
+  for vague rules, missing examples, drifted compliance, cross-file
+  contradictions, and mechanical-enforcement opportunities.
+- `doc-code-drift-audit.prompt.md` — finds where READMEs / docs / inline
   comments disagree with the actual code.
+- `doc-code-drift-fix.prompt.md` — actions findings from the
+  drift audit. Defaults to `hard` drifts only; updates docs to match
+  current code, verifies links / snippets, commits locally per drift
+  type. Does not push.
 
 See [`DocsHygiene/README.md`](DocsHygiene/README.md).
 
@@ -455,7 +493,7 @@ existing ones.
 ### Conventions
 
 - **File naming.** Prompt files use `<name>.prompt.md` in
-  kebab-case (e.g. `audit-test-coverage.prompt.md`). Folder READMEs
+  kebab-case (e.g. `test-coverage-audit.prompt.md`). Folder READMEs
   are plain `README.md`.
 - **Folder organisation.** Group prompts by workflow domain (e.g.
   `AuditTesting/`, `MilestoneAudit/`), not by action verb. A new
@@ -519,10 +557,28 @@ MIT — see [`LICENSE`](LICENSE).
 
 Stable at [v1.1.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.1.0).
 v1.1.0 adds the `/playbook` router and per-tool adapter generator,
-four new collection families (DependencyHygiene, StackUpgrade,
-ObservabilityAudit, DBMigrationReview), and the dead-code-fix /
-duplicate-code-fix action prompts.
+four new collection families (DependencyAudit, StackUpgrade,
+ObservabilityAudit, DBMigrationAudit), and the dead-code-fix /
+duplicate-logic-fix action prompts.
 
 New collections and stack variants continue to be added as new
 project shapes come up — see the per-folder READMEs for guidance
 on adding a variant.
+
+### Recent renames
+
+Four prompts were renamed to align with the `<topic>-audit` /
+`<topic>-fix` pair convention used by `dead-code-audit` /
+`dead-code-fix`. Old slugs no longer dispatch — update any
+saved invocations:
+
+| Old slug | New slug |
+|---|---|
+| `audit-test-coverage` | `test-coverage-audit` |
+| `add-missing-tests` | `test-coverage-fix` |
+| `duplicate-logic` | `duplicate-logic-audit` |
+| `duplicate-code-fix` | `duplicate-logic-fix` |
+| `audit-claude-md` | `agent-instructions-audit` |
+| `doc-code-drift` | `doc-code-drift-audit` (plus new `doc-code-drift-fix`) |
+| `db-migration-review-*` family | `db-migration-audit-*` (plus new `db-migration-fix-*` family) |
+| `dependency-hygiene-*` family | `dependency-audit-*` (plus new `dependency-fix-*` family) |

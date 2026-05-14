@@ -6,13 +6,13 @@ opt-in fix prompts that action the in-scope findings.
 | Audit | What it finds | Action prompt |
 |---|---|---|
 | `dead-code-audit.prompt.md` | Exports never imported, components never rendered, env vars never read, branches the type system can't reach, code hiding behind permanently-on / off feature flags. Classified Hard / Likely / Conditionally dead. | `dead-code-fix.prompt.md` |
-| `duplicate-logic.prompt.md` | Functions / modules / components doing the same job under different names. Clusters them, recommends a winner per cluster, and notes the migration risk. | `duplicate-code-fix.prompt.md` |
+| `duplicate-logic-audit.prompt.md` | Functions / modules / components doing the same job under different names. Clusters them, recommends a winner per cluster, and notes the migration risk. | `duplicate-logic-fix.prompt.md` |
 
 The fix prompts deliberately default to a **narrow** scope:
 
 - `dead-code-fix` defaults to `Hard dead` only. Action `Likely` /
   `Conditionally dead` only when the user explicitly opts in.
-- `duplicate-code-fix` defaults to `risk:low` clusters and asks the
+- `duplicate-logic-fix` defaults to `risk:low` clusters and asks the
   user which to action. It verifies the build between each cluster
   rather than bulk-applying all of them.
 

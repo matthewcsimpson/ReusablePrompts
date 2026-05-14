@@ -76,7 +76,7 @@ class ParseFrontmatterTests(unittest.TestCase):
 
 class SlugAndVariantTests(unittest.TestCase):
     def test_slugify_single_variant(self) -> None:
-        self.assertEqual(gen.slugify("audit-test-coverage.prompt.md"), "audit-test-coverage")
+        self.assertEqual(gen.slugify("test-coverage-audit.prompt.md"), "test-coverage-audit")
 
     def test_slugify_dotted_variant(self) -> None:
         self.assertEqual(
@@ -86,8 +86,8 @@ class SlugAndVariantTests(unittest.TestCase):
 
     def test_derive_family_variant_single(self) -> None:
         self.assertEqual(
-            gen.derive_family_variant("audit-test-coverage.prompt.md"),
-            ("audit-test-coverage", ""),
+            gen.derive_family_variant("test-coverage-audit.prompt.md"),
+            ("test-coverage-audit", ""),
         )
 
     def test_derive_family_variant_multi(self) -> None:
@@ -136,11 +136,11 @@ class CodexAgentsMergeTests(unittest.TestCase):
     def _prompts(self) -> list[gen.Prompt]:
         return [
             gen.Prompt(
-                slug="audit-test-coverage",
+                slug="test-coverage-audit",
                 collection="AuditTesting",
-                rel_path="AuditTesting/audit-test-coverage.prompt.md",
+                rel_path="AuditTesting/test-coverage-audit.prompt.md",
                 description="Audit test coverage.",
-                family="audit-test-coverage",
+                family="test-coverage-audit",
             ),
         ]
 
@@ -151,7 +151,7 @@ class CodexAgentsMergeTests(unittest.TestCase):
             content = target.read_text()
             self.assertIn(gen.GLOBAL_MARKER_BEGIN, content)
             self.assertIn(gen.GLOBAL_MARKER_END, content)
-            self.assertIn("audit-test-coverage", content)
+            self.assertIn("test-coverage-audit", content)
 
     def test_replaces_existing_managed_section(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -167,7 +167,7 @@ class CodexAgentsMergeTests(unittest.TestCase):
             self.assertIn("user epilogue", content)
             self.assertNotIn("stale", content)
             self.assertEqual(content.count(gen.GLOBAL_MARKER_BEGIN), 1)
-            self.assertIn("audit-test-coverage", content)
+            self.assertIn("test-coverage-audit", content)
 
     def test_appends_when_markers_absent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -183,11 +183,11 @@ class InstallProjectTests(unittest.TestCase):
     def _prompts(self) -> list[gen.Prompt]:
         return [
             gen.Prompt(
-                slug="audit-test-coverage",
+                slug="test-coverage-audit",
                 collection="AuditTesting",
-                rel_path="AuditTesting/audit-test-coverage.prompt.md",
+                rel_path="AuditTesting/test-coverage-audit.prompt.md",
                 description="Audit test coverage.",
-                family="audit-test-coverage",
+                family="test-coverage-audit",
             ),
         ]
 
@@ -201,7 +201,7 @@ class InstallProjectTests(unittest.TestCase):
             self.assertTrue(cursor.exists())
             self.assertTrue(copilot.exists())
             expected_path_fragment = str(
-                gen.REPO_ROOT.resolve() / "AuditTesting" / "audit-test-coverage.prompt.md"
+                gen.REPO_ROOT.resolve() / "AuditTesting" / "test-coverage-audit.prompt.md"
             )
             for f in (cursor, copilot):
                 content = f.read_text()
