@@ -35,7 +35,7 @@ python3 tools/generate-adapters.py --install-global    # Claude + Codex, any pro
 That writes:
 
 - `~/.claude/commands/playbook.md` — Claude Code router slash command.
-- `~/.claude/skills/<slug>/SKILL.md` × 38 — auto-trigger by description
+- `~/.claude/skills/<slug>/SKILL.md` × 50 — auto-trigger by description
   match (hidden from the `/` picker via `user-invocable: false`).
 - `~/.codex/prompts/playbook.md` — Codex CLI router slash command.
 - `~/.codex/AGENTS.md` — Codex CLI user-level catalog (sentinel-bounded;
