@@ -48,8 +48,25 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DESC_MAX = 200
 FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 
+# Skill files live at <root>/.claude/skills/<slug>/SKILL.md — three directory
+# segments deep, so a relative link back to a prompt at <root>/<col>/<file>
+# needs "../../../" to reach <root>.
+SKILL_LINK_DEPTH = 3
+
 GLOBAL_MARKER_BEGIN = "<!-- BEGIN agentic-playbooks (managed by tools/generate-adapters.py) -->"
 GLOBAL_MARKER_END = "<!-- END agentic-playbooks -->"
+
+
+def die(message: str) -> None:
+    print(f"generate-adapters: {message}", file=sys.stderr)
+    sys.exit(1)
+
+
+def write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not content.endswith("\n"):
+        content += "\n"
+    path.write_text(content, encoding="utf-8")
 
 
 # Detection signals for multi-variant collections. Keys are the variant tokens
@@ -105,6 +122,25 @@ class Prompt:
 
 
 def parse_frontmatter(text: str) -> dict[str, object]:
+    """Parse the YAML frontmatter at the head of a prompt file.
+
+    Deliberately a small subset of YAML — not a full parser. Supported:
+
+    - `key: value` single-line scalars (optionally wrapped in single or
+      double quotes, which are stripped).
+    - `key: [a, b, c]` inline lists of bare tokens.
+    - `# comment` lines and blank lines (ignored).
+
+    Unsupported constructs are rejected explicitly rather than silently
+    misparsed:
+
+    - Block scalars (`key: |` / `key: >` / continuation lines).
+    - Multi-line mapping values (the next non-indented `key:` line ends
+      the previous value, which our line-by-line loop wouldn't honour).
+
+    If you need more, switch to `yaml.safe_load`; just don't let this
+    parser quietly absorb constructs it doesn't understand.
+    """
     m = FRONTMATTER_RE.match(text)
     if not m:
         return {}
@@ -112,17 +148,21 @@ def parse_frontmatter(text: str) -> dict[str, object]:
     out: dict[str, object] = {}
     for raw in body.splitlines():
         line = raw.rstrip()
-        if not line or line.startswith("#"):
+        if not line or line.lstrip().startswith("#"):
             continue
         if ":" not in line:
-            continue
+            die(f"frontmatter: line without ':' is not supported: {line!r}")
         key, _, value = line.partition(":")
         key = key.strip()
         value = value.strip()
+        if value in ("|", ">", "|-", ">-", "|+", ">+"):
+            die(f"frontmatter: block scalars are not supported (key {key!r})")
         if value.startswith("[") and value.endswith("]"):
             inner = value[1:-1].strip()
             out[key] = [item.strip() for item in inner.split(",") if item.strip()] if inner else []
         else:
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+                value = value[1:-1]
             out[key] = value
     return out
 
@@ -195,18 +235,6 @@ def discover(repo: Path) -> list[Prompt]:
         )
 
     return prompts
-
-
-def die(message: str) -> None:
-    print(f"generate-adapters: {message}", file=sys.stderr)
-    sys.exit(1)
-
-
-def write(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if not content.endswith("\n"):
-        content += "\n"
-    path.write_text(content, encoding="utf-8")
 
 
 def resolve_path(p: Prompt, *, absolute_root: Path | None, depth: int) -> str:
@@ -380,7 +408,7 @@ def emit_skill(out: Path, p: Prompt, *, absolute_root: Path | None = None) -> No
     if p.related:
         related = ", ".join(f"`/playbook {r}`" for r in p.related)
         related_line = f"\nRelated: {related}.\n"
-    target = resolve_path(p, absolute_root=absolute_root, depth=3)
+    target = resolve_path(p, absolute_root=absolute_root, depth=SKILL_LINK_DEPTH)
     if absolute_root is None:
         link = f"[`{p.rel_path}`]({target})"
     else:
@@ -510,7 +538,6 @@ def clean_project_local(out: Path) -> None:
     for sub in [
         out / ".claude" / "skills",
         out / ".claude" / "commands",
-        out / ".cursor" / "rules",
         out / ".cursor" / "commands",
         out / ".github" / "prompts",
     ]:

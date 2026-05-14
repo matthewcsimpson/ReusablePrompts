@@ -41,8 +41,10 @@ That writes:
 - `~/.codex/AGENTS.md` — Codex CLI user-level catalog (sentinel-bounded;
   any pre-existing content is preserved).
 
-Re-run `--install-global` after `git pull` to refresh.
-`--uninstall-global` removes everything it wrote.
+Re-run `--install-global` after `git pull` to refresh. Also re-run if
+you move the clone to a different path — the global install bakes in
+absolute paths to the source prompts. `--uninstall-global` removes
+everything it wrote.
 
 ### Claude Code
 

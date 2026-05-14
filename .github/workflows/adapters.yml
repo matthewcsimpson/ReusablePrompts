@@ -23,5 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Unit tests for generator
+        run: python3 tools/test_generate_adapters.py
       - name: Verify generated adapters match source prompts
         run: python3 tools/generate-adapters.py --check
