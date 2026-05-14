@@ -16,11 +16,23 @@ for Rust, etc.).
 
 ## Inputs
 
-Optional:
+Scope is load-bearing — a whole-repo observability audit and a "just
+the payments service" audit produce different reports.
 
-- A specific service / package to scope to (default: whole repo).
-- Whether to include test files (default: exclude — test logging
-  follows different rules).
+If the user hasn't named a scope, **ask before starting**. Offer them
+three options:
+
+1. **Name a specific scope** — a service, package, or feature area
+   (e.g. `services/payments/`, `lib/queue/`, "the auth flow").
+2. **Run against the whole repo** — confirm they want the wide scan.
+3. **Infer it yourself** — pick the service or package that most
+   directly handles external requests or background work, where
+   observability matters most. State your choice before proceeding.
+
+Also ask whether test files are in scope (default: excluded — test
+logging follows different rules from production).
+
+Don't guess silently.
 
 ---
 

@@ -17,11 +17,24 @@ both.
 
 ## Inputs
 
-Optional:
-- A specific directory or package to scope to. Without it, runs
-  against the whole repo.
-- A category to focus on (utilities, components, route handlers,
-  services, etc.).
+Scope is load-bearing — a whole-repo duplicate-logic audit and a
+"just the validation helpers" audit produce very different reports.
+
+If the user hasn't named a scope, **ask before starting**. Offer them
+three options:
+
+1. **Name a specific scope** — a directory, package, feature area,
+   or category (e.g. `lib/utils/`, "the route handlers", "the
+   formatting helpers").
+2. **Run against the whole repo** — confirm they want the wide
+   scan; the resulting cluster count will be larger and harder to
+   triage.
+3. **Infer it yourself** — pick a scope likely to contain duplicates:
+   utility / helper directories (`utils/`, `helpers/`, `lib/`),
+   validation modules, or formatting/parsing code. State your
+   choice before proceeding.
+
+Don't guess silently.
 
 ## Step 1 — Establish scope
 

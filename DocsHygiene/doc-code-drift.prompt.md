@@ -13,11 +13,23 @@ Read-only audit — does not fix any drift, only surfaces it.
 
 ## Inputs
 
-Optional:
-- A specific doc file or directory to scope to (e.g. just
-  `README.md`, or just `docs/`).
-- Without scope, runs against every documentation file in the
-  repo.
+Scope is load-bearing — a whole-repo doc audit and a "just `README.md`"
+audit produce very different reports.
+
+If the user hasn't named a scope, **ask before starting**. Offer them
+three options:
+
+1. **Name a specific scope** — a doc file or directory (e.g. just
+   `README.md`, just `docs/api/`, just the project's LLM
+   instruction files).
+2. **Run against every doc in the repo** — confirm they want the
+   wide scan.
+3. **Infer it yourself** — start from the docs most likely to drift
+   (root `README.md`, `CLAUDE.md` / `AGENTS.md`, any docs with
+   embedded commands or env-var references). State your choice
+   before proceeding.
+
+Don't guess silently.
 
 ## Step 1 — Enumerate documentation
 
