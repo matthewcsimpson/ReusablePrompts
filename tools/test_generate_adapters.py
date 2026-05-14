@@ -13,7 +13,9 @@ in `write_codex_agents`. The end-to-end generator path is exercised by
 
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import sys
 import tempfile
 import unittest
@@ -26,6 +28,10 @@ SPEC = importlib.util.spec_from_file_location(
 )
 assert SPEC is not None and SPEC.loader is not None
 gen = importlib.util.module_from_spec(SPEC)
+# Register in sys.modules before exec — Python 3.14's @dataclass resolves
+# `cls.__module__` against sys.modules during class creation and will fail
+# otherwise. Required because the module name has a hyphen and can't be
+# imported the normal way.
 sys.modules["generate_adapters"] = gen
 SPEC.loader.exec_module(gen)
 
@@ -171,6 +177,54 @@ class CodexAgentsMergeTests(unittest.TestCase):
             content = target.read_text()
             self.assertTrue(content.startswith("hand-written notes"))
             self.assertIn(gen.GLOBAL_MARKER_BEGIN, content)
+
+
+class InstallProjectTests(unittest.TestCase):
+    def _prompts(self) -> list[gen.Prompt]:
+        return [
+            gen.Prompt(
+                slug="audit-test-coverage",
+                collection="AuditTesting",
+                rel_path="AuditTesting/audit-test-coverage.prompt.md",
+                description="Audit test coverage.",
+                family="audit-test-coverage",
+            ),
+        ]
+
+    def test_writes_cursor_and_copilot_routers_with_absolute_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                gen.install_project(self._prompts(), target)
+            cursor = target / ".cursor" / "commands" / "playbook.md"
+            copilot = target / ".github" / "prompts" / "playbook.prompt.md"
+            self.assertTrue(cursor.exists())
+            self.assertTrue(copilot.exists())
+            expected_path_fragment = str(
+                gen.REPO_ROOT.resolve() / "AuditTesting" / "audit-test-coverage.prompt.md"
+            )
+            for f in (cursor, copilot):
+                content = f.read_text()
+                self.assertIn(expected_path_fragment, content)
+                self.assertNotIn("../", content)
+
+    def test_skips_copilot_instructions_to_avoid_clobber(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with contextlib.redirect_stdout(io.StringIO()):
+                gen.install_project(self._prompts(), target)
+            self.assertFalse((target / ".github" / "copilot-instructions.md").exists())
+
+    def test_refuses_to_install_into_playbooks_repo_itself(self) -> None:
+        with self.assertRaises(SystemExit):
+            gen.install_project(self._prompts(), gen.REPO_ROOT)
+
+    def test_errors_on_missing_target(self) -> None:
+        with self.assertRaises(SystemExit):
+            gen.install_project(
+                self._prompts(),
+                Path("/nonexistent/zxxxq/agentic-playbooks-test-target"),
+            )
 
 
 if __name__ == "__main__":

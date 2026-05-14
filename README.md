@@ -46,6 +46,11 @@ you move the clone to a different path — the global install bakes in
 absolute paths to the source prompts. `--uninstall-global` removes
 everything it wrote.
 
+For Cursor and GitHub Copilot Chat (neither has a user-level install
+path), use `--install-project <path>` to write a router with absolute
+paths into a specific target project — see the Cursor and Copilot
+sections below.
+
 ### Claude Code
 
 After `--install-global`, from any project:
@@ -111,45 +116,57 @@ setup, from the Cursor chat panel:
 That works because the router's relative paths
 (`../../AuditTesting/...`) resolve correctly inside this repo's tree.
 
-**Using `/playbook` from another project — the catch.** The
-checked-in router uses paths relative to this repo's layout. Copying
-only `.cursor/commands/playbook.md` into another project will fail
-when the agent tries to open a prompt — `../../AuditTesting/...` from
-that project's `.cursor/commands/` points at directories that don't
-exist there.
+**Using `/playbook` from another project.** Run
+`--install-project <path>` against the target — it writes a Cursor
+router with absolute paths back to this repo:
 
-Until the generator grows a Cursor-specific install mode that writes
-absolute paths (Claude and Codex already get this via
-`--install-global`), the practical options are:
+```bash
+python3 ~/Projects/agentic-playbooks/tools/generate-adapters.py \
+  --install-project ~/Projects/my-app
+```
 
-1. **Run playbooks from inside this repo.** Open the playbooks repo in
-   Cursor, run the playbook there, apply the resulting changes to
-   your target project. Works today, zero setup.
-2. **Hand-edit a copied router.** Copy
-   `.cursor/commands/playbook.md` into the target project's
-   `.cursor/commands/` folder, then open it and replace every
-   `../../<Collection>/...` path with the absolute path to this repo
-   (e.g. `/Users/you/Projects/agentic-playbooks/AuditTesting/...`).
-   Re-do the edit when the catalog changes.
-3. **Use a tool that supports global install.** Claude Code and Codex
-   CLI both pick up `--install-global` and work from any project
-   without per-project setup. Cursor lacks the user-level path that
-   would make this possible.
+That produces `~/Projects/my-app/.cursor/commands/playbook.md` (and
+the Copilot equivalent — see the next section). Open that project in
+Cursor and `/playbook` will resolve correctly.
+
+Re-run `--install-project` after `git pull` in the playbooks repo, or
+if you move the playbooks clone — the router carries baked-in
+absolute paths. To remove it, delete
+`<target>/.cursor/commands/playbook.md`.
+
+A bare copy of the checked-in `.cursor/commands/playbook.md` into
+another project will **not** work — it uses paths relative to this
+repo's layout (`../../AuditTesting/...`) which won't resolve from
+elsewhere. Use `--install-project` instead.
 
 ### GitHub Copilot Chat (VS Code)
 
 VS Code Copilot Chat reads `.github/prompts/<name>.prompt.md` as a
-slash command. There's no global install path — copy this repo's
-`.github/prompts/playbook.prompt.md` into your target project's
-`.github/prompts/` folder. Then in Copilot Chat:
+slash command. There's no user-level install path, so — same as
+Cursor — the router has to live inside each project.
+
+**To use `/playbook` from a target project**, run
+`--install-project <path>` against it (the same command also handles
+Cursor in one shot):
+
+```bash
+python3 ~/Projects/agentic-playbooks/tools/generate-adapters.py \
+  --install-project ~/Projects/my-app
+```
+
+That writes `<target>/.github/prompts/playbook.prompt.md` with
+absolute paths back to this repo. Then in Copilot Chat:
 
 ```
 /playbook audit-test-coverage
 /playbook dependency-hygiene
 ```
 
-The `.github/copilot-instructions.md` catalog is also written and
-provides natural-language fallback for older Copilot versions.
+`--install-project` deliberately does **not** touch
+`.github/copilot-instructions.md` in the target project — many
+projects have hand-written Copilot instructions and we won't clobber
+them. If you want the natural-language catalog there too, copy this
+repo's `.github/copilot-instructions.md` manually and edit the paths.
 
 ### Without filesystem access (paste into chat)
 

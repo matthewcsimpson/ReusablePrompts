@@ -26,10 +26,13 @@ Modes:
   --check               verify project-local adapters match source (CI)
   --install-global      install routers into ~/.claude (commands + skills)
                         and ~/.codex (prompts/playbook.md + AGENTS.md), with
-                        absolute paths — works from any project. Cursor and
-                        Copilot have no stable user-level file path; install
-                        per-project.
+                        absolute paths — works from any project.
   --uninstall-global    remove globally-installed routers + skills
+  --install-project PATH
+                        install Cursor + Copilot routers into the target
+                        project at PATH, with absolute paths back to this
+                        repo. Use this for tools that lack a user-level
+                        install path (Cursor, GitHub Copilot Chat).
 """
 
 from __future__ import annotations
@@ -584,6 +587,51 @@ def remove_legacy_global_adapters(prompts: list[Prompt]) -> int:
     return removed
 
 
+def install_project(prompts: list[Prompt], target: Path) -> None:
+    """Install Cursor + Copilot routers into a target project.
+
+    Neither tool has a stable user-level install path, so the router
+    file must live inside each project. We write absolute paths back to
+    this repo so the agent can find the prompt files regardless of
+    where the target project sits relative to the playbooks clone.
+
+    The `.github/copilot-instructions.md` catalog is deliberately not
+    written — target projects often have hand-written Copilot
+    instructions and we don't want to clobber them.
+    """
+    target = target.expanduser().resolve()
+    if not target.is_dir():
+        die(f"target project not found or not a directory: {target}")
+    absolute_root = REPO_ROOT.resolve()
+    if target == absolute_root:
+        die(
+            "target is the playbooks repo itself — use the no-flag mode "
+            "(plain `python3 tools/generate-adapters.py`) to regenerate "
+            "this repo's checked-in relative-path adapters."
+        )
+
+    cursor_file = target / ".cursor" / "commands" / "playbook.md"
+    write(cursor_file, render_cursor_router(prompts, absolute_root=absolute_root, depth=0))
+
+    copilot_file = target / ".github" / "prompts" / "playbook.prompt.md"
+    write(copilot_file, render_copilot_router(prompts, absolute_root=absolute_root, depth=0))
+
+    print(
+        f"generate-adapters: installed project-local routers\n"
+        f"  Cursor router:   {cursor_file}\n"
+        f"  Copilot router:  {copilot_file}\n"
+        f"\n"
+        f"  Source prompts:  {absolute_root}\n"
+        f"\n"
+        f"Invocation (from {target}):\n"
+        f"  Cursor:               /playbook <slug> [scope]\n"
+        f"  Copilot Chat:         /playbook <slug> [scope]\n"
+        f"\n"
+        f"Re-run after `git pull` in {absolute_root.name}, or if you move\n"
+        f"the playbooks clone — the routers carry baked-in absolute paths."
+    )
+
+
 def install_global(prompts: list[Prompt]) -> None:
     h = home()
     absolute_root = REPO_ROOT.resolve()
@@ -758,6 +806,15 @@ def main() -> int:
         action="store_true",
         help="Remove globally-installed routers and skills.",
     )
+    group.add_argument(
+        "--install-project",
+        metavar="PATH",
+        help=(
+            "Install Cursor + Copilot routers (with absolute paths back to "
+            "this repo) into the target project at PATH. Use for tools "
+            "without a user-level install path."
+        ),
+    )
     args = parser.parse_args()
 
     prompts = discover(REPO_ROOT)
@@ -771,6 +828,10 @@ def main() -> int:
 
     if args.uninstall_global:
         uninstall_global(prompts)
+        return 0
+
+    if args.install_project:
+        install_project(prompts, Path(args.install_project))
         return 0
 
     generate_project_local(REPO_ROOT, prompts)
