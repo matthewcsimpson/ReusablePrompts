@@ -27,8 +27,8 @@ stack; if it's ambiguous, it asks before running.
 ### One-time setup
 
 ```bash
-git clone https://github.com/matthewcsimpson/agentic-playbooks.git ~/Projects/agentic-playbooks
-cd ~/Projects/agentic-playbooks
+git clone https://github.com/matthewcsimpson/agentic-playbooks.git
+cd agentic-playbooks
 python3 tools/generate-adapters.py --install-global    # Claude + Codex, any project
 ```
 
@@ -121,13 +121,13 @@ That works because the router's relative paths
 router with absolute paths back to this repo:
 
 ```bash
-python3 ~/Projects/agentic-playbooks/tools/generate-adapters.py \
-  --install-project ~/Projects/my-app
+python3 /path/to/agentic-playbooks/tools/generate-adapters.py \
+  --install-project /path/to/target-project
 ```
 
-That produces `~/Projects/my-app/.cursor/commands/playbook.md` (and
-the Copilot equivalent — see the next section). Open that project in
-Cursor and `/playbook` will resolve correctly.
+That produces `<target>/.cursor/commands/playbook.md` (and the Copilot
+equivalent — see the next section). Open that project in Cursor and
+`/playbook` will resolve correctly.
 
 Re-run `--install-project` after `git pull` in the playbooks repo, or
 if you move the playbooks clone — the router carries baked-in
@@ -150,8 +150,8 @@ Cursor — the router has to live inside each project.
 Cursor in one shot):
 
 ```bash
-python3 ~/Projects/agentic-playbooks/tools/generate-adapters.py \
-  --install-project ~/Projects/my-app
+python3 /path/to/agentic-playbooks/tools/generate-adapters.py \
+  --install-project /path/to/target-project
 ```
 
 That writes `<target>/.github/prompts/playbook.prompt.md` with
