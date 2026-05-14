@@ -37,12 +37,16 @@ scope. Don't action anything before the user has answered.
 
 ## Step 1 — Locate the audit
 
-Read `docs/audits/duplicate-logic.md`. If the directory or report
-doesn't exist, surface that and stop — run `/playbook duplicate-logic`
-first.
+The audit writes to `docs/audits/duplicate-logic.md` when the project
+has a `docs/` directory, and inline otherwise. Look for the file
+first; if no report exists there, ask the user whether they have an
+inline report to paste, or whether they need to run the audit.
 
 If multiple reports exist (e.g. timestamped), use the most recent
 unless the user named one explicitly.
+
+If neither a file nor an inline report is available, stop and
+recommend running `/playbook duplicate-logic` first.
 
 ---
 

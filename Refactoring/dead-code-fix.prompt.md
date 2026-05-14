@@ -32,12 +32,16 @@ guess scope. The audit is opinionated; the fix should be conservative.
 
 ## Step 1 — Locate the audit
 
-Read `docs/audits/dead-code.md`. If the directory or the report
-doesn't exist, surface that and stop — run `/playbook dead-code-audit`
-first.
+The audit writes to `docs/audits/dead-code.md` when the project has a
+`docs/` directory, and inline otherwise. Look for the file first; if
+no report exists there, ask the user whether they have an inline
+report to paste, or whether they need to run the audit.
 
-If multiple dead-code reports exist (e.g. timestamped), use the most
-recent unless the user named one explicitly.
+If multiple reports exist (e.g. timestamped), use the most recent
+unless the user named one explicitly.
+
+If neither a file nor an inline report is available, stop and
+recommend running `/playbook dead-code-audit` first.
 
 ---
 
@@ -57,33 +61,44 @@ observations` — those are diagnostic, not deletion candidates.
 
 ---
 
-## Step 3 — Delete each finding, verify, commit
+## Step 3 — Action findings, category by category
 
-Work through findings grouped by **category** (exports, components,
-env vars, branches, deprecated paths). Within each category:
+Findings are grouped by **category** (exports, components, env vars,
+branches, deprecated paths). Each category produces **one commit**.
+Verification runs per finding so a broken deletion doesn't poison the
+rest of the category.
 
-1. Make the deletion. Remove the symbol and any now-orphaned imports
-   it pulled in. Don't leave commented-out code or "removed because…"
-   trail comments — the commit message carries the why.
-2. Run the project's type-check and lint commands (e.g.
-   `pnpm check-types && pnpm lint`, `npm run typecheck`,
-   `mypy . && ruff check`, `cargo check && cargo clippy`). Infer the
-   exact commands from the project manifest.
-3. Run the test suite. A passing build with failing tests is not
-   acceptable — dead code that the type checker accepted may still
-   have been runtime-exercised by tests.
-4. If any check fails: revert the deletion in this working tree (do
-   not commit it), record the finding under "Skipped — broke checks"
-   with the failing command and a one-line guess at why. Move on.
-5. If checks pass: stage and commit. One commit per category, or per
-   clearly-related cluster within a category. Conventional commit
-   message referencing what was removed.
+For each category:
 
-**Grouping rule:** one commit per logical category, not per file. If
-five unused exports across five files all fell out of the same dead
-deprecated path, they go in one commit ("remove deprecated session
-helpers"). If two unused exports come from unrelated features, they
-go in two commits.
+1. For each finding in this category:
+   a. Make the deletion. Remove the symbol and any now-orphaned
+      imports it pulled in. Don't leave commented-out code or
+      "removed because…" trail comments — the commit message
+      carries the why.
+   b. Run the project's type-check and lint commands (e.g.
+      `pnpm check-types && pnpm lint`, `npm run typecheck`,
+      `mypy . && ruff check`, `cargo check && cargo clippy`).
+      Infer the exact commands from the project manifest.
+   c. Run the test suite. A passing build with failing tests is
+      not acceptable — dead code that the type checker accepted
+      may still have been runtime-exercised by tests.
+   d. If any check fails: revert this finding's edits in the
+      working tree (do not stage them), record under "Skipped —
+      broke checks" with the failing command and a one-line guess
+      at why. Move on to the next finding.
+   e. If checks pass: `git add` the changes. **Do not commit yet.**
+2. When every finding in the category has been processed (actioned
+   or skipped), commit the staged changes as one category-level
+   commit. Conventional commit message referencing what was removed
+   ("remove deprecated session helpers", "drop unused exports from
+   `lib/legacy/`").
+3. If every finding in the category was skipped, there's nothing
+   staged — move to the next category without committing.
+
+If five unused exports across five files all fell out of the same
+dead deprecated path, they go in one commit. If two unused exports
+come from unrelated features, they belong in different categories
+and thus different commits.
 
 ---
 
