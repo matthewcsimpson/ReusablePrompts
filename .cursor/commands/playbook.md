@@ -63,12 +63,18 @@ summarise, paraphrase, or skip steps unless the playbook itself says to.
   Related: `add-missing-tests`
 - **`dead-code-audit`** — Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
   File: `../../Refactoring/dead-code-audit.prompt.md`
-  Related: `duplicate-logic`
+  Related: `dead-code-fix`, `duplicate-logic`
+- **`dead-code-fix`** — Action the in-scope findings from the most recent dead-code-audit report. Deletes dead code, verifies the build, commits locally per category. Does not push or open a PR.
+  File: `../../Refactoring/dead-code-fix.prompt.md`
+  Related: `dead-code-audit`
 - **`doc-code-drift`** — Read-only audit that finds places where documentation says one thing and the code does another (outdated commands, renamed env vars, drifted signatures, dead links).
   File: `../../DocsHygiene/doc-code-drift.prompt.md`
+- **`duplicate-code-fix`** — Action user-selected clusters from the most recent duplicate-logic report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
+  File: `../../Refactoring/duplicate-code-fix.prompt.md`
+  Related: `duplicate-logic`
 - **`duplicate-logic`** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
   File: `../../Refactoring/duplicate-logic.prompt.md`
-  Related: `dead-code-audit`
+  Related: `duplicate-code-fix`, `dead-code-audit`
 - **`observability-audit`** — Read-only audit of how a codebase logs, traces, and surfaces errors — swallowed errors, missing correlation IDs, log-level mismatches, PII in logs, dishonest health checks.
   File: `../../ObservabilityAudit/observability-audit.prompt.md`
 - **`post-milestone-fix`** — Action the in-scope findings from the most recent post-milestone audit report. Commits locally; does not push or open a PR.

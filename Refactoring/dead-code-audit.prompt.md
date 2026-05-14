@@ -1,6 +1,6 @@
 ---
 description: Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
-related: [duplicate-logic]
+related: [dead-code-fix, duplicate-logic]
 ---
 
 # Dead code audit

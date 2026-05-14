@@ -368,15 +368,23 @@ See [`IssueWorkflow/README.md`](IssueWorkflow/README.md).
 
 ### `Refactoring/`
 
-Read-only audits that surface refactor opportunities.
+Read-only audits that surface refactor opportunities, paired with
+narrow-scope fix prompts that action the findings.
 
-- `duplicate-logic.prompt.md` — finds functions / modules /
-  components doing the same job under different names; clusters
-  and recommends a winner per cluster.
 - `dead-code-audit.prompt.md` — finds exports / components / env
   vars / branches that aren't used. Classifies Hard / Likely /
   Conditionally dead. Pairs with the project's static tool when
   one is configured.
+- `dead-code-fix.prompt.md` — actions the in-scope findings from
+  the dead-code audit. Defaults to `Hard dead` only; verifies the
+  build after each deletion. Commits locally; does not push.
+- `duplicate-logic.prompt.md` — finds functions / modules /
+  components doing the same job under different names; clusters
+  and recommends a winner per cluster.
+- `duplicate-code-fix.prompt.md` — actions user-selected clusters
+  from the duplicate-logic report. Defaults to `risk:low` and asks
+  which to action; verifies the build between each cluster.
+  Commits locally; does not push.
 
 See [`Refactoring/README.md`](Refactoring/README.md).
 

@@ -123,10 +123,16 @@ This file is generated from the prompts' YAML frontmatter by
 
 - **dead-code-audit** — Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
   Read: `Refactoring/dead-code-audit.prompt.md`
+  Related: `dead-code-fix`, `duplicate-logic`
+- **dead-code-fix** — Action the in-scope findings from the most recent dead-code-audit report. Deletes dead code, verifies the build, commits locally per category. Does not push or open a PR.
+  Read: `Refactoring/dead-code-fix.prompt.md`
+  Related: `dead-code-audit`
+- **duplicate-code-fix** — Action user-selected clusters from the most recent duplicate-logic report. Migrate callers to the recommended winner, delete losers, verify, commit per cluster. Local commits only.
+  Read: `Refactoring/duplicate-code-fix.prompt.md`
   Related: `duplicate-logic`
 - **duplicate-logic** — Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
   Read: `Refactoring/duplicate-logic.prompt.md`
-  Related: `dead-code-audit`
+  Related: `duplicate-code-fix`, `dead-code-audit`
 
 ### StackUpgrade
 

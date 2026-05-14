@@ -1,6 +1,6 @@
 ---
 description: Find functions, modules, or components doing the same job under different names. Cluster, identify a winner, propose consolidations. Read-only — does not action.
-related: [dead-code-audit]
+related: [duplicate-code-fix, dead-code-audit]
 ---
 
 # Find duplicate logic
