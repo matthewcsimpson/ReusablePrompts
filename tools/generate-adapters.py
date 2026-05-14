@@ -2,7 +2,7 @@
 """Generate per-tool router files from the canonical *.prompt.md library.
 
 A single `/playbook` slash command in each supported tool dispatches by slug
-to the canonical prompt file. Multi-variant collections (e.g. dependency-hygiene
+to the canonical prompt file. Multi-variant collections (e.g. dependency-audit
 has -dotnet/-npm/-python/-swift/-terraform variants) detect the active stack
 from the working directory and pick the matching variant.
 
@@ -74,7 +74,7 @@ def write(path: Path, content: str) -> None:
 
 # Detection signals for multi-variant collections. Keys are the variant tokens
 # that appear after the family name in a prompt filename
-# (e.g. `dependency-hygiene.npm.prompt.md` → variant `npm`).
+# (e.g. `dependency-audit.npm.prompt.md` → variant `npm`).
 VARIANT_SIGNALS: dict[str, tuple[str, list[str]]] = {
     "dotnet":       (".NET / C#",
                      ["`*.csproj`, `*.sln`, `global.json`, `Directory.Packages.props`"]),
@@ -115,12 +115,12 @@ VARIANT_SIGNALS: dict[str, tuple[str, list[str]]] = {
 
 @dataclass
 class Prompt:
-    slug: str            # e.g. "dependency-hygiene-npm" or "audit-test-coverage"
-    collection: str      # folder name, e.g. "DependencyHygiene"
+    slug: str            # e.g. "dependency-audit-npm" or "test-coverage-audit"
+    collection: str      # folder name, e.g. "DependencyAudit"
     rel_path: str        # path relative to REPO_ROOT
     description: str
     related: list[str] = field(default_factory=list)
-    family: str = ""     # e.g. "dependency-hygiene"; equals slug for single-variant
+    family: str = ""     # e.g. "dependency-audit"; equals slug for single-variant
     variant: str = ""    # e.g. "npm"; empty string for single-variant
 
 
@@ -638,7 +638,7 @@ def install_global(prompts: list[Prompt]) -> None:
 
     legacy_cleared = remove_legacy_global_adapters(prompts)
 
-    # Claude Code: single /playbook router + 38 hidden skills
+    # Claude Code: single /playbook router + one hidden skill per slug
     claude_dir = h / ".claude"
     for p in prompts:
         emit_skill(claude_dir, p, absolute_root=absolute_root)
