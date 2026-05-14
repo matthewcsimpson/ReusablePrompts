@@ -30,12 +30,12 @@ Both flags render directly in the chat — no file is read, no work is
 performed.
 
 **(b) Exact slug match.** If the slug is an exact key in the catalog
-below (e.g. `audit-test-coverage`, `dependency-hygiene-npm`), open
+below (e.g. `test-coverage-audit`, `dependency-audit-npm`), open
 that file and follow it verbatim. Use the user scope as the target /
 additional context the playbook should apply to.
 
 **(c) Family match — auto-detect variant.** If the slug matches a
-multi-variant family (e.g. `dependency-hygiene`, `stack-upgrade`),
+multi-variant family (e.g. `dependency-audit`, `stack-upgrade`),
 inspect the working directory for the detection signals listed below.
 Pick the variant whose signals match the project's stack and run that
 variant's file. If multiple match (a polyglot repo), or none match,

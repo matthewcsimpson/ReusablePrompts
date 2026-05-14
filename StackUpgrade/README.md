@@ -34,7 +34,7 @@ to run, manual changes the codemods miss, and a risk assessment
 per breaking change.
 
 For dependency-version bumps (libraries, not framework / runtime),
-use [`DependencyHygiene/`](../DependencyHygiene/) instead. This
+use [`DependencyAudit/`](../DependencyAudit/) instead. This
 prompt is for the spine of the stack — the framework, the language
 version, the SDK.
 

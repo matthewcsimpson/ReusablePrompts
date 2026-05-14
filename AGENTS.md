@@ -11,7 +11,7 @@ command that takes a slug:
 - Natural language (any agent that reads this file): "run the
   `<slug>` playbook against <target>".
 
-For multi-variant families (e.g. `dependency-hygiene`), pass just the
+For multi-variant families (e.g. `dependency-audit`), pass just the
 family name and the agent will inspect the working directory to pick
 the right variant.
 
