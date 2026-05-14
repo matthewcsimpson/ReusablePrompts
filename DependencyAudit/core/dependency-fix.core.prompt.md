@@ -132,9 +132,11 @@ vulnerability:
 1. Determine the fix version (the variant supplies the lookup).
 2. Apply the upgrade with the variant's per-ecosystem command.
 3. If the fix version is a major bump (breaking change), and the user
-   only opted in to `risk:low`, **skip** and record under "Vuln fix
-   requires major bump — skipped" with the recommended major target
-   for the user's follow-up.
+   only opted in to `risk:low`, **defer** — do not silently skip. Add
+   the dep to a **Deferred security fixes** list with: CVE id, current
+   version, required major target, and a one-line note on what
+   breaks. This list surfaces in the report as its own section
+   (Step 10) so deferred CVEs can't be lost in noise.
 4. Run the variant's verification: typecheck, lint, test.
 5. If any check fails: revert the upgrade in the manifest and
    lockfile, record under "Skipped — broke checks" with the failing
@@ -200,8 +202,10 @@ For each "missing" dep (imported in code, not declared in manifest):
 1. Determine the version to pin. Prefer the version already
    resolved transitively (use the variant's lookup) — that's the
    version the code was likely tested against. If no transitive
-   resolution exists (a truly missing dep), pin to the variant's
-   default range (typically `^latest`).
+   resolution exists (a truly missing dep), resolve `latest` first
+   (the variant supplies the lookup command), then pin to that
+   resolved version using the variant's default range syntax
+   (typically `^<resolved-version>`).
 2. Install via the variant's command.
 3. Run the variant's verification.
 
@@ -261,17 +265,24 @@ A passing check suite is the gate.
 
 ## Step 10 — Report
 
-Output a short summary:
+Output a short summary. Lead with security-sensitive items so they
+can't be lost:
 
+- **⚠️ Deferred security fixes** — vulnerabilities that required a
+  major bump while the user was in `risk:low` / `risk:med`. Per
+  entry: CVE id, dep, current version, required major target,
+  one-line break note. **The user must follow up on these out-of-band
+  before merging.** If empty, mark ✅ "No deferred CVEs".
+- **⚠️ Excluded deps with active CVEs** — deps the user explicitly
+  excluded that the audit still flagged as vulnerable. Per entry:
+  CVE id, dep, why excluded (if the user said). If empty, mark ✅
+  "No excluded CVEs".
 - **Categories actioned** — count per category, with dep names.
 - **Bumps applied** — list with `<dep>: <old> → <new>` format.
 - **Vulnerabilities cleared** — list with CVE ids.
 - **Deps removed** — list.
 - **Deps added** — list.
 - **Skipped within scope** — with reason per item.
-- **Excluded by filter** — list of deps the user excluded
-  (especially any with active vulnerabilities — the user opted to
-  leave them in scope-for-the-audit-but-not-this-fix).
 - **Final check result** — pass / fail with the failing command.
 - **Suggested PR title and body summary** — draft for a human to
   paste, not to open.

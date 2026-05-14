@@ -41,7 +41,7 @@ guess scope.
 
 ## Step 1 — Locate the audit
 
-The audit writes to `docs/audits/doc-drift.md` when the project has a
+The audit writes to `docs/audits/doc-code-drift.md` when the project has a
 `docs/` directory, and inline otherwise. Look for the file first; if
 no report exists there, ask the user whether they have an inline
 report to paste, or whether they need to run the audit.

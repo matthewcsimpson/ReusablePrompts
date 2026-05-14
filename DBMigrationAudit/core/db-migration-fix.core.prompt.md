@@ -51,20 +51,23 @@ The user supplies:
   splitting one migration into multiple, that's structural; ask the
   user before doing it. They may prefer to do that themselves.
 - **Mode** — one of:
-  - `in-place` (default): the migration is still un-applied beyond
-    local dev; edit the migration file directly. The fix re-checks
+  - `auto` (recommended default): the prompt detects applied-state
+    during Step 2 verification and asks the user which mode to use,
+    showing them which cited migrations are on a shared environment
+    and which aren't. The user picks once; the rest of the run uses
+    the chosen mode.
+  - `in-place`: edit the migration file directly. The fix re-checks
     applied-state per migration and stops if any cited migration is
-    on a shared environment.
-  - `corrective`: the migration has been applied to a shared
-    environment (staging, prod, CI seed db). Hand-editing the
-    applied file would mismatch the ORM's stored checksum, so the
-    fix instead generates a **new forward migration** that reverses
-    or compensates for the audit's finding. Use when the original
-    migration is already in `_prisma_migrations` /
-    `__EFMigrationsHistory` / `alembic_version` / `migrations`
-    on a shared db.
+    on a shared environment. Use when you know the migration is
+    still un-applied beyond local dev.
+  - `corrective`: hand-editing the applied file would mismatch the
+    ORM's stored checksum, so the fix instead generates a **new
+    forward migration** that reverses or compensates for the audit's
+    finding. Use when the original is already in
+    `_prisma_migrations` / `__EFMigrationsHistory` /
+    `alembic_version` / `migrations` on a shared db.
 
-If the user hasn't specified scope or mode, ask. Don't guess.
+If the user hasn't specified scope, ask. Mode defaults to `auto`.
 
 ---
 
@@ -88,17 +91,28 @@ editing:
 - The cited file/line is still present in the migration.
 - The unsafe operation hasn't already been fixed (e.g. the author
   applied `CONCURRENTLY` between audit and fix).
-- The migration's applied-state is consistent with the chosen mode.
-  Use the ORM-specific check from the variant:
-  - In `in-place` mode: if any cited migration is in
-    `_prisma_migrations` / `__EFMigrationsHistory` /
-    `alembic_version` / `migrations` on a shared environment,
-    stop. Tell the user the in-place edit will fail and offer to
-    re-run in `corrective` mode.
-  - In `corrective` mode: if a cited migration is *not* applied on
-    a shared environment, the in-place edit would be cheaper —
-    confirm with the user before generating a new corrective
-    migration.
+- The migration's applied-state. Use the ORM-specific check from the
+  variant. For each cited migration, classify as either:
+  - **un-applied** — not present in the ORM's applied-migrations
+    table on any shared environment; in-place edit is safe.
+  - **applied** — present in `_prisma_migrations` /
+    `__EFMigrationsHistory` / `alembic_version` / `migrations` on
+    at least one shared environment; in-place edit will fail (or
+    silently skip).
+
+  Then route by mode:
+
+  - **`auto` mode** — present the classification to the user
+    (e.g. "2 migrations un-applied, 1 already on staging") and ask
+    which mode to use for the whole run. Default suggestion: if
+    *any* cited migration is applied, recommend `corrective` for
+    the whole run; otherwise recommend `in-place`. Don't mix modes
+    in one run.
+  - **`in-place` mode** — if any cited migration is applied, stop
+    and offer to switch to `corrective` mode.
+  - **`corrective` mode** — if no cited migration is applied, the
+    in-place edit would be cheaper; confirm with the user before
+    generating new corrective migrations.
 
 If a finding no longer applies, record under "Skipped — already
 fixed" and move on.
@@ -176,7 +190,8 @@ migration into multiple. The variant supplies the per-ORM mechanics
 
 The generic shape:
 
-1. Confirm the user opted in to restructuring (Step 0 input).
+1. Confirm the user opted in to restructuring (the "Restructure
+   permission" input).
 2. Mark the original migration's destructive operation in a comment
    as "moved to migration X / Y / Z" — easier to review the split.
 3. Generate the new migration files with the ORM's tooling.

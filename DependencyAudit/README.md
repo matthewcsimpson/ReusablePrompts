@@ -91,7 +91,9 @@ The fix's edit catalogue mirrors the audit's findings:
   removing for plugin-discovery / codegen references.
 - **Missing additions** — pin to the version already resolved
   transitively (the version the code was likely tested against), or
-  `^latest` if no transitive resolution exists.
+  resolve `latest` to a concrete version and pin its range if no
+  transitive resolution exists (`latest` is a dist-tag, not a
+  semver range, so `^latest` is not a valid specifier).
 - **Lockfile re-resolution** — re-lock without touching the
   manifest; surface unexpected version moves if the re-lock pulls
   changes in.

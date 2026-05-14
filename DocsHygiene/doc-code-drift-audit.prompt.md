@@ -120,7 +120,7 @@ For each drift:
 
 ## Step 5 — Report
 
-Output to `docs/audits/doc-drift.md`. Structure:
+Output to `docs/audits/doc-code-drift.md`. Structure:
 
 ```
 # Doc-code drift audit

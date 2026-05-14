@@ -73,6 +73,21 @@ class ParseFrontmatterTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             gen.parse_frontmatter(text)
 
+    def test_real_prompt_frontmatter_parses(self) -> None:
+        """Smoke-test parse_frontmatter against a real on-disk prompt
+        file from one of the new families. Catches future frontmatter
+        drift (e.g. accidentally introducing a block scalar or an
+        unsupported construct) without needing a full --check run.
+        """
+        target = gen.REPO_ROOT / "DependencyAudit" / "dependency-fix.npm.prompt.md"
+        self.assertTrue(target.exists(), f"missing prompt fixture: {target}")
+        fm = gen.parse_frontmatter(target.read_text(encoding="utf-8"))
+        self.assertIn("description", fm)
+        self.assertIsInstance(fm["description"], str)
+        # description is bounded by the same limit the generator enforces
+        self.assertLessEqual(len(fm["description"]), gen.DESC_MAX)
+        self.assertEqual(fm.get("related"), ["dependency-audit-npm"])
+
 
 class SlugAndVariantTests(unittest.TestCase):
     def test_slugify_single_variant(self) -> None:

@@ -164,7 +164,19 @@ yarn why <dep>          # both classic and berry
 ```
 
 If a transitive resolution exists, pin to that version's caret range
-(`^<version>`). Otherwise pin `^latest`.
+(`^<version>`). Otherwise, resolve `latest` first to a concrete
+version, then pin its caret range:
+
+```sh
+npm view <dep> version           # prints the latest published version
+pnpm view <dep> version
+yarn info <dep> version          # classic
+yarn npm info <dep> --json | jq -r '.["dist-tags"].latest'    # berry
+```
+
+Use the resolved version (e.g. `^4.17.21`), not the literal string
+`latest` — `latest` is a dist-tag, not a semver range, and `^latest`
+is not a valid specifier.
 
 ```sh
 npm install <dep>@^<version>

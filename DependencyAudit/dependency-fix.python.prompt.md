@@ -149,18 +149,24 @@ pdm list <dep>
 pip show <dep>
 ```
 
-If transitively present, pin its caret-equivalent:
+If transitively present, pin its caret-equivalent. Example for
+`requests` resolved at `2.31.0` with next major at `3.0`:
 
 ```sh
-uv add '<dep>>=<version>,<<next-major>'
-poetry add '<dep>^<version>'
-pdm add '<dep>>=<version>,<<next-major>'
+uv add 'requests>=2.31.0,<3.0'
+poetry add 'requests^2.31.0'
+pdm add 'requests>=2.31.0,<3.0'
 
 # pip-tools — add to requirements*.in with version spec
-echo '<dep>>=<version>,<<next-major>' >> requirements.in
+echo 'requests>=2.31.0,<3.0' >> requirements.in
 pip-compile requirements.in
 pip-sync requirements.txt requirements-dev.txt
 ```
+
+(Pattern: `<package>>=<resolved-version>,<<next-major>` in pip syntax —
+the `>=` lower-bound is the resolved version, the `<` upper-bound is
+the next major. PEP 440 lacks a native caret operator, so the explicit
+range substitutes.)
 
 Decide test/dev vs production from the import location:
 
