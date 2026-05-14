@@ -187,6 +187,12 @@ These prompts assume an agentic CLI with file read, shell execution,
 and git (branch + commit). Designed against Claude Code and Codex CLI;
 anything with the same capability set should work.
 
+**Personally verified by the maintainer:** Claude Code, Cursor (1.6+),
+GitHub Copilot Chat (VS Code). The Codex CLI router is generated from
+the same template and covered by the unit tests + drift check, but
+hasn't been exercised end-to-end by the maintainer — if you hit a
+Codex-specific quirk, please file an issue.
+
 ## A note on token usage
 
 These playbooks are deliberately thorough — they read across a repo,
@@ -511,7 +517,12 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Stable at [v1.0.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.0.0).
+Stable at [v1.1.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.1.0).
+v1.1.0 adds the `/playbook` router and per-tool adapter generator,
+four new collection families (DependencyHygiene, StackUpgrade,
+ObservabilityAudit, DBMigrationReview), and the dead-code-fix /
+duplicate-code-fix action prompts.
+
 New collections and stack variants continue to be added as new
 project shapes come up — see the per-folder READMEs for guidance
 on adding a variant.
