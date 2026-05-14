@@ -93,15 +93,48 @@ playbook".
 
 ### Cursor
 
-Cursor 1.6+ supports user-defined slash commands at
-`.cursor/commands/<name>.md`. There is no stable user-level path, so
-this is **per-project**: copy `.cursor/commands/playbook.md` from this
-repo into your target project's `.cursor/commands/` folder. Then:
+Cursor 1.6+ reads slash commands from `.cursor/commands/<name>.md`.
+Unlike Claude Code (`~/.claude/`) and Codex CLI (`~/.codex/`), Cursor
+has **no stable user-level path** — the router file must live inside
+each project you want to invoke `/playbook` from.
+
+**Easiest way to try it — open this repo in Cursor.** The router is
+already checked in at `.cursor/commands/playbook.md`. With no extra
+setup, from the Cursor chat panel:
 
 ```
+/playbook --list
 /playbook audit-test-coverage
-/playbook stack-upgrade
+/playbook dependency-hygiene
 ```
+
+That works because the router's relative paths
+(`../../AuditTesting/...`) resolve correctly inside this repo's tree.
+
+**Using `/playbook` from another project — the catch.** The
+checked-in router uses paths relative to this repo's layout. Copying
+only `.cursor/commands/playbook.md` into another project will fail
+when the agent tries to open a prompt — `../../AuditTesting/...` from
+that project's `.cursor/commands/` points at directories that don't
+exist there.
+
+Until the generator grows a Cursor-specific install mode that writes
+absolute paths (Claude and Codex already get this via
+`--install-global`), the practical options are:
+
+1. **Run playbooks from inside this repo.** Open the playbooks repo in
+   Cursor, run the playbook there, apply the resulting changes to
+   your target project. Works today, zero setup.
+2. **Hand-edit a copied router.** Copy
+   `.cursor/commands/playbook.md` into the target project's
+   `.cursor/commands/` folder, then open it and replace every
+   `../../<Collection>/...` path with the absolute path to this repo
+   (e.g. `/Users/you/Projects/agentic-playbooks/AuditTesting/...`).
+   Re-do the edit when the catalog changes.
+3. **Use a tool that supports global install.** Claude Code and Codex
+   CLI both pick up `--install-global` and work from any project
+   without per-project setup. Cursor lacks the user-level path that
+   would make this possible.
 
 ### GitHub Copilot Chat (VS Code)
 
