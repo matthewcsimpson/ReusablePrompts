@@ -1,3 +1,7 @@
+---
+description: Drive a running HTTP API after a milestone tag is cut — hit headline endpoints with concrete requests, assert response shape and auth behaviour, write a pass/fail/blocked report.
+---
+
 # Post-milestone smoke test — API variant
 
 Drive a running HTTP API after a milestone tag is cut. Hit the

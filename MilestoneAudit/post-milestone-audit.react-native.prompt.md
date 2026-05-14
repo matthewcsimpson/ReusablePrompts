@@ -1,3 +1,8 @@
+---
+description: Audit a React Native / Expo codebase after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance against documented rules.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — React Native / Expo variant
 
 Audit a React Native (Expo or bare RN) codebase after a milestone

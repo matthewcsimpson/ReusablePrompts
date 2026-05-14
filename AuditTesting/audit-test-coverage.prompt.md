@@ -1,3 +1,8 @@
+---
+description: Survey a repository's test coverage from scratch, identify the most important gaps, and present a ranked list of recommendations.
+related: [add-missing-tests]
+---
+
 # Audit test coverage
 
 Survey a repository's test coverage from scratch, identify the most important
@@ -7,6 +12,28 @@ Makes no assumptions about prior surveys, curated strategy documents, or
 pre-existing inventories — every run is a fresh look. Run this any time you
 want an honest picture of where the test suite is thin. Pair with
 `add-missing-tests.prompt.md` to act on a finding.
+
+## Inputs
+
+Scope is the load-bearing input. The same repo audited "whole" vs
+"just the auth module" produces very different reports.
+
+If the user hasn't named a scope, **ask before starting**. Offer them
+three options:
+
+1. **Name a specific scope** — a directory, package, or feature area
+   (e.g. `apps/api/`, `lib/auth/`, "the payment flow").
+2. **Run against the whole repo** — confirm they want the wide
+   scan; the resulting ranked list will be longer and harder to
+   triage. Better for "is the suite generally healthy" than "what's
+   the next thing to write."
+3. **Infer it yourself** — pick a scope based on the project's
+   structure. Default heuristic: largest non-test source directory,
+   or the directory with the most recent commit activity if `git
+   log` is informative. State your choice and the reasoning before
+   proceeding.
+
+Don't guess silently.
 
 ## Your job
 

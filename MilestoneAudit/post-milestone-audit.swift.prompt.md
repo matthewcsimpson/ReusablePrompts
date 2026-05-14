@@ -1,3 +1,8 @@
+---
+description: Audit a Swift / Xcode codebase after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance against documented rules.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — Swift / Xcode variant
 
 Audit a Swift codebase built in Xcode after a milestone tag is cut.

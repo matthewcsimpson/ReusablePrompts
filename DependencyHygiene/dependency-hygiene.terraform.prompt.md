@@ -1,3 +1,7 @@
+---
+description: Audit a Terraform / OpenTofu codebase's provider, module, and backend dependencies for outdated versions, vulnerabilities, and duplicate version pins.
+---
+
 # Dependency hygiene — Terraform variant
 
 Audit a Terraform / OpenTofu codebase's provider, module, and

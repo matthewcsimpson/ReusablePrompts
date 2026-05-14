@@ -1,3 +1,7 @@
+---
+description: Given last-known-good, symptom, and reproduction steps, drive a disciplined git bisect to the breaking commit and propose a fix.
+---
+
 # Bisect a regression
 
 Given "this worked at tag / commit X, broken at HEAD, here's how

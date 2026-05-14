@@ -1,3 +1,7 @@
+---
+description: Audit the project's LLM instruction files for vague rules, missing examples, drifted compliance, and mechanical-enforcement opportunities.
+---
+
 # Audit CLAUDE.md (or equivalent)
 
 Read the project's LLM instruction files and audit them: which
@@ -11,8 +15,24 @@ sharpen the rule's wording — not just the code.
 
 ## Inputs
 
-None required. The prompt finds and audits whichever LLM
-instruction files are present.
+By default, audits every LLM instruction file in the repo. The
+user can narrow this if they want focused attention on one file.
+
+If multiple instruction files exist and the user hasn't named one,
+**ask before starting**. Offer them three options:
+
+1. **Name a specific file or set** — e.g. just `CLAUDE.md`, just
+   `.cursor/rules/`, just the nested CLAUDE.md files under a
+   specific package.
+2. **Audit them all** — confirm they want the cross-file pass; the
+   report will be longer and may surface contradictions between
+   files.
+3. **Infer it yourself** — start with the root `CLAUDE.md` if
+   present, then `AGENTS.md`, then any nested instruction files
+   closer to recent code activity. State your choice before
+   proceeding.
+
+If only one instruction file exists, skip the question and audit it.
 
 ## Step 1 — Locate instruction files
 

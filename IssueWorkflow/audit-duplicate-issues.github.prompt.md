@@ -1,3 +1,7 @@
+---
+description: Survey a GitHub repository's open issues for duplicates and near-duplicates; cluster, classify, and recommend an action per cluster. Stops before any closure or edit.
+---
+
 # Audit duplicate issues — GitHub variant
 
 Audit a GitHub repository's open issues for duplicates and

@@ -1,3 +1,8 @@
+---
+description: Plan a Next.js version upgrade — read release notes, scan for affected patterns, survey codemods, produce a risk-ranked migration plan.
+related: [post-milestone-fix]
+---
+
 # Stack upgrade — Next.js variant
 
 Plan a Next.js version upgrade.

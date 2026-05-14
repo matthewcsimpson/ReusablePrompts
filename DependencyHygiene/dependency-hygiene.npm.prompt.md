@@ -1,3 +1,7 @@
+---
+description: Audit a JavaScript / TypeScript project (npm, pnpm, or yarn) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
+---
+
 # Dependency hygiene — npm variant
 
 Audit a JavaScript / TypeScript project using npm, pnpm, or yarn.

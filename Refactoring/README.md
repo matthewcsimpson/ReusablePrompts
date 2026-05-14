@@ -1,22 +1,24 @@
 # Refactoring
 
-Read-only audits that surface refactor opportunities. Neither prompt
-actions changes — they produce ranked reports the user (or a
-follow-up prompt) can act on selectively.
+Read-only audits that surface refactor opportunities, paired with
+opt-in fix prompts that action the in-scope findings.
 
-| Prompt | What it finds |
-|---|---|
-| `duplicate-logic.prompt.md` | Functions / modules / components doing the same job under different names. Clusters them, recommends a winner per cluster, and notes the migration risk. |
-| `dead-code-audit.prompt.md` | Exports never imported, components never rendered, env vars never read, branches the type system can't reach, code hiding behind permanently-on / off feature flags. Classified Hard / Likely / Conditionally dead. |
+| Audit | What it finds | Action prompt |
+|---|---|---|
+| `dead-code-audit.prompt.md` | Exports never imported, components never rendered, env vars never read, branches the type system can't reach, code hiding behind permanently-on / off feature flags. Classified Hard / Likely / Conditionally dead. | `dead-code-fix.prompt.md` |
+| `duplicate-logic.prompt.md` | Functions / modules / components doing the same job under different names. Clusters them, recommends a winner per cluster, and notes the migration risk. | `duplicate-code-fix.prompt.md` |
 
-## Why these aren't "fix" prompts
+The fix prompts deliberately default to a **narrow** scope:
 
-Both prompts deliberately stop at the report. Refactor decisions
-benefit from human judgment per cluster (which version to keep,
-whether to consolidate at all), and bulk-applying an LLM's
-recommendations across many files compounds small errors. The
-intended flow is: run the audit, triage the findings, action one
-cluster / file at a time with focused prompts or by hand.
+- `dead-code-fix` defaults to `Hard dead` only. Action `Likely` /
+  `Conditionally dead` only when the user explicitly opts in.
+- `duplicate-code-fix` defaults to `risk:low` clusters and asks the
+  user which to action. It verifies the build between each cluster
+  rather than bulk-applying all of them.
+
+Both fix prompts commit locally only — they don't push or open a PR.
+The intended flow is: run the audit, read the report, decide which
+findings are worth acting on, invoke the fix prompt with that scope.
 
 ## LLM value-add over static tools
 

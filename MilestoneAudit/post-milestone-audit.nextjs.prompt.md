@@ -1,3 +1,8 @@
+---
+description: Audit a Next.js (App Router) + TypeScript codebase after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — Next.js / TypeScript variant
 
 Audit a Next.js (App Router) + TypeScript codebase after a milestone

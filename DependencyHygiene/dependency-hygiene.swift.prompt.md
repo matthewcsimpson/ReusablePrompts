@@ -1,3 +1,7 @@
+---
+description: Audit a Swift / Xcode project (Swift Package Manager and/or CocoaPods) for outdated versions, vulnerabilities, unused or missing declarations, and duplicates.
+---
+
 # Dependency hygiene — Swift variant
 
 Audit a Swift / Xcode project using Swift Package Manager (SPM),

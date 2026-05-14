@@ -1,3 +1,7 @@
+---
+description: Audit a Python project (pip, uv, Poetry, or pdm) for outdated versions, vulnerabilities, unused or missing declarations, lockfile drift, and duplicates.
+---
+
 # Dependency hygiene — Python variant
 
 Audit a Python project using pip, uv, Poetry, or pdm.

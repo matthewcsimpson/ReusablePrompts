@@ -49,27 +49,47 @@ a script.
 
 ## Step 0 — Inputs
 
-Ask the user (or read from the conversation):
+This step is load-bearing. The plan you produce changes substantially
+depending on the target version and path shape — getting it wrong
+means the user reads a plan for the wrong upgrade. Do not skip ahead.
+
+**Required inputs:**
 
 - **Current version** — detected from the manifest, but confirm.
-- **Target version** — specific (`Next.js 15.0.3`), or a track
-  (`latest LTS`, `latest stable`). If a track, resolve to a
-  specific version before continuing.
-- **Skip versions in between?** — if the path crosses multiple
-  majors (e.g. .NET 6 → 8 crosses 7), confirm whether 7 is
-  skipped entirely or used as a stepping stone. For most stacks
-  the recommendation is to upgrade major-by-major; some stacks
+- **Target version** — what version to upgrade to.
+- **Path shape** — direct (current → target) or stepped through
+  intermediate majors. Most stacks prefer major-by-major; some
   (Python language, Swift) support multi-step jumps cleanly.
 
-If the user hasn't picked a target, recommend one before
-proceeding:
+If the user hasn't named the target, **ask before proceeding**.
+Offer them three options:
 
-- For LTS-oriented stacks (.NET, Node), the latest LTS.
-- For move-fast stacks (Next.js, React Native), the latest minor of
-  the latest stable major, unless the latest major is < 30 days
-  old (early adoption risk).
-- For language versions (Python, Swift), the latest stable that the
-  project's deploy targets support.
+1. **Name it directly** — e.g. `.NET 9`, `Next.js 15.0.3`,
+   `Python 3.12`. You resolve any specific patch level from the
+   latest stable in that line.
+2. **Name a constraint and let you resolve** — e.g. "latest LTS",
+   "one major ahead", "latest stable but not preview", "the version
+   our deploy target supports". You read the relevant release feed
+   and pick a concrete target. State your choice before producing
+   the plan.
+3. **Infer it yourself** — you read the current pinned version, look
+   up the latest stable release for this stack, and pick a target.
+   Default heuristic:
+   - LTS-oriented stacks (.NET, Node) → the latest LTS.
+   - Move-fast stacks (Next.js, React Native) → the latest minor of
+     the latest stable major, unless that major is < 30 days old
+     (early adoption risk — drop back one major).
+   - Language versions (Python, Swift) → the latest stable the
+     project's deploy targets support.
+
+   State your choice and the reasoning before producing the plan.
+
+Do not guess silently. A plan for the wrong target is worse than
+asking.
+
+If the upgrade path crosses multiple majors (e.g. .NET 6 → 8 crosses
+7), also confirm whether intermediate majors are skipped or used as
+stepping stones before continuing.
 
 ---
 

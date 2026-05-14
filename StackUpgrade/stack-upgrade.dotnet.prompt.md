@@ -1,3 +1,8 @@
+---
+description: Plan a .NET TFM upgrade (e.g. .NET 6 → 8, 8 → 9) — read release notes, scan for affected patterns, survey codemods, produce a risk-ranked migration plan.
+related: [post-milestone-fix]
+---
+
 # Stack upgrade — .NET variant
 
 Plan a .NET TFM (Target Framework Moniker) upgrade — e.g. .NET 6 →

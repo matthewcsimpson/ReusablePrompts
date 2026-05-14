@@ -1,3 +1,8 @@
+---
+description: Audit a Python codebase after a milestone tag is cut — drift, regressions, extraction signals, and convention compliance against documented rules.
+related: [post-milestone-fix]
+---
+
 # Post-milestone audit — Python variant
 
 Audit a Python codebase after a milestone tag is cut.

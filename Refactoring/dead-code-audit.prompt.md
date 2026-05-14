@@ -1,3 +1,8 @@
+---
+description: Find code that isn't used — exports never imported, components never rendered, branches never reached, env vars never read, permanently-on/off flags. Read-only.
+related: [dead-code-fix, duplicate-logic]
+---
+
 # Dead code audit
 
 Find code that isn't used: exports never imported, components never
@@ -16,10 +21,28 @@ The LLM adds semantic dead-code detection that static tools miss:
 
 ## Inputs
 
-Optional:
-- A specific directory or package to scope to.
-- Whether to include or exclude test files (default: exclude —
-  test-only code is rarely dead).
+Scope is load-bearing — a whole-repo dead-code audit and a
+"just `lib/legacy/`" audit produce very different reports.
+
+If the user hasn't named a scope, **ask before starting**. Offer them
+three options:
+
+1. **Name a specific scope** — a directory, package, or feature
+   area (e.g. `apps/web/`, `lib/legacy/`, "the deprecated
+   reporting code").
+2. **Run against the whole repo** — confirm they want the wide
+   scan; the resulting list will be longer and the "is this
+   dynamically referenced?" uncertainty grows with scope.
+3. **Infer it yourself** — pick a scope based on the project's
+   structure. Default heuristic: directories that look like
+   candidates for cleanup (`legacy/`, `deprecated/`, `old-*`), or
+   the largest non-test source directory if none stand out. State
+   your choice before proceeding.
+
+Also ask whether test files are in scope (default: excluded — test-
+only code is rarely dead).
+
+Don't guess silently.
 
 ## Step 1 — Run the static dead-code tool, if one is configured
 

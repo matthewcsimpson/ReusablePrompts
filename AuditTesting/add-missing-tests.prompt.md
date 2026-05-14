@@ -1,3 +1,8 @@
+---
+description: Write missing tests for a single component, module, or feature, matching the project's existing test conventions.
+related: [audit-test-coverage]
+---
+
 # Add missing tests for a specific target
 
 Write the missing tests for a single component, module, or feature.

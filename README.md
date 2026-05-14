@@ -1,4 +1,4 @@
-# ReusablePrompts
+# agentic-playbooks
 
 A collection of prompts for agentic coding tools (Claude Code, Codex,
 and similar) that have filesystem access, shell execution, and git.
@@ -8,41 +8,208 @@ README explaining what's inside and how the prompts there fit together.
 
 ## Invocation
 
-These are plain markdown files — no tool-specific format. Pick whichever
-pattern fits how you work:
+The canonical prompts are plain markdown files under each collection
+folder (e.g. `AuditTesting/audit-test-coverage.prompt.md`). A
+generator emits a single `/playbook` router slash command for each
+supported tool — type the slug, the router dispatches.
 
-1. **Clone and reference.** Clone this repo somewhere local and point
-   your agent at the file:
+```
+/playbook <slug> [optional scope or target]
+/playbook --list              # full catalog with descriptions
+/playbook --help              # short usage + slug list
+```
 
-   ```
-   git clone https://github.com/matthewcsimpson/ReusablePrompts.git ~/code/ReusablePrompts
-   # then in your agent:
-   #   follow ~/code/ReusablePrompts/AuditTesting/audit-test-coverage.prompt.md
-   ```
+For multi-variant families (e.g. `dependency-hygiene` has -dotnet /
+-npm / -python / -swift / -terraform variants), pass just the family
+name. The agent inspects the working directory to pick the matching
+stack; if it's ambiguous, it asks before running.
 
-   Best when you'll use the prompts across many projects and want a
-   single source of truth you can `git pull` to update.
+### One-time setup
 
-2. **Copy into the target project.** Copy the prompt file into the repo
-   you're working on (e.g. `prompts/audit-test-coverage.prompt.md` or
-   `.claude/commands/audit-test-coverage.md` for Claude Code slash
-   commands). Commit it alongside the project's other tooling.
+```bash
+git clone https://github.com/matthewcsimpson/agentic-playbooks.git
+cd agentic-playbooks
+python3 tools/generate-adapters.py --install-global    # Claude + Codex, any project
+```
 
-   Best when the project's contributors should be able to run the same
-   prompt without cloning anything extra, or when you want the prompt
-   versioned with the project it audits.
+That writes:
 
-3. **Paste into chat.** Open the prompt file, copy its contents, paste
-   into the agent chat, add your target / context underneath.
+- `~/.claude/commands/playbook.md` — Claude Code router slash command.
+- `~/.claude/skills/<slug>/SKILL.md` × 38 — auto-trigger by description
+  match (hidden from the `/` picker via `user-invocable: false`).
+- `~/.codex/prompts/playbook.md` — Codex CLI router slash command.
+- `~/.codex/AGENTS.md` — Codex CLI user-level catalog (sentinel-bounded;
+  any pre-existing content is preserved).
 
-   Best for one-off use or for tools without filesystem access to this
-   repo.
+Re-run `--install-global` after `git pull` to refresh. Also re-run if
+you move the clone to a different path — the global install bakes in
+absolute paths to the source prompts. `--uninstall-global` removes
+everything it wrote.
+
+For Cursor and GitHub Copilot Chat (neither has a user-level install
+path), use `--install-project <path>` to write a router with absolute
+paths into a specific target project — see the Cursor and Copilot
+sections below.
+
+### Claude Code
+
+After `--install-global`, from any project:
+
+```
+/playbook --list                              # see every available playbook
+/playbook --help                              # short usage
+/playbook audit-test-coverage
+/playbook add-missing-tests for the api routes
+/playbook dependency-hygiene
+/playbook stack-upgrade-nextjs
+```
+
+- **Discovery** — `/playbook --list` prints the full catalog with
+  descriptions; `/playbook --help` (or `/playbook` with no slug) prints
+  short usage + the slug list.
+- **Exact slug** (`audit-test-coverage`, `dependency-hygiene-npm`,
+  `db-migration-review-prisma`, …) → dispatches directly.
+- **Family name** (`dependency-hygiene`, `stack-upgrade`,
+  `db-migration-review`, `post-milestone-audit`) → Claude detects the
+  stack from the working directory and runs the matching variant.
+- **Smoke-test family** (`post-milestone-smoke-test`) → can't be
+  detected from the file tree; Claude asks which artifact you shipped
+  (api / cli / ios / web).
+- **Natural language** still works — say "audit my test coverage" and
+  the matching skill auto-triggers by description.
+
+Without `--install-global`, you can still use Claude Code from inside
+this repo — `.claude/commands/playbook.md` is checked in.
+
+### Codex CLI
+
+```
+/prompts:playbook audit-test-coverage
+/prompts:playbook dependency-hygiene
+```
+
+The `/prompts:` prefix is Codex's namespace for user prompts —
+mandatory, not optional. Same dispatch rules as above.
+
+If your Codex version doesn't read `~/.codex/prompts/`, fall back to
+the project-local `AGENTS.md` catalog (auto-read when Codex launches
+in this directory) and ask by name: "run the `audit-test-coverage`
+playbook".
+
+### Cursor
+
+Cursor 1.6+ reads slash commands from `.cursor/commands/<name>.md`.
+Unlike Claude Code (`~/.claude/`) and Codex CLI (`~/.codex/`), Cursor
+has **no stable user-level path** — the router file must live inside
+each project you want to invoke `/playbook` from.
+
+**Easiest way to try it — open this repo in Cursor.** The router is
+already checked in at `.cursor/commands/playbook.md`. With no extra
+setup, from the Cursor chat panel:
+
+```
+/playbook --list
+/playbook audit-test-coverage
+/playbook dependency-hygiene
+```
+
+That works because the router's relative paths
+(`../../AuditTesting/...`) resolve correctly inside this repo's tree.
+
+**Using `/playbook` from another project.** Run
+`--install-project <path>` against the target — it writes a Cursor
+router with absolute paths back to this repo:
+
+```bash
+python3 /path/to/agentic-playbooks/tools/generate-adapters.py \
+  --install-project /path/to/target-project
+```
+
+That produces `<target>/.cursor/commands/playbook.md` (and the Copilot
+equivalent — see the next section). Open that project in Cursor and
+`/playbook` will resolve correctly.
+
+Re-run `--install-project` after `git pull` in the playbooks repo, or
+if you move the playbooks clone — the router carries baked-in
+absolute paths. To remove it, delete
+`<target>/.cursor/commands/playbook.md`.
+
+A bare copy of the checked-in `.cursor/commands/playbook.md` into
+another project will **not** work — it uses paths relative to this
+repo's layout (`../../AuditTesting/...`) which won't resolve from
+elsewhere. Use `--install-project` instead.
+
+### GitHub Copilot Chat (VS Code)
+
+VS Code Copilot Chat reads `.github/prompts/<name>.prompt.md` as a
+slash command. There's no user-level install path, so — same as
+Cursor — the router has to live inside each project.
+
+**To use `/playbook` from a target project**, run
+`--install-project <path>` against it (the same command also handles
+Cursor in one shot):
+
+```bash
+python3 /path/to/agentic-playbooks/tools/generate-adapters.py \
+  --install-project /path/to/target-project
+```
+
+That writes `<target>/.github/prompts/playbook.prompt.md` with
+absolute paths back to this repo. Then in Copilot Chat:
+
+```
+/playbook audit-test-coverage
+/playbook dependency-hygiene
+```
+
+`--install-project` deliberately does **not** touch
+`.github/copilot-instructions.md` in the target project — many
+projects have hand-written Copilot instructions and we won't clobber
+them. If you want the natural-language catalog there too, copy this
+repo's `.github/copilot-instructions.md` manually and edit the paths.
+
+### Without filesystem access (paste into chat)
+
+Open the prompt file, copy its contents, paste into the agent chat, add
+your target / context underneath. Works for any tool, no install
+required.
+
+### Copy a prompt into a target project
+
+If you want a specific prompt versioned alongside the project it
+audits, copy the `.prompt.md` (and its `core/` sibling if it's a
+variant) into that project's `prompts/` folder. The global adapters
+aren't needed when the prompt travels with the target project.
 
 ## Target tools
 
 These prompts assume an agentic CLI with file read, shell execution,
 and git (branch + commit). Designed against Claude Code and Codex CLI;
 anything with the same capability set should work.
+
+## A note on token usage
+
+These playbooks are deliberately thorough — they read across a repo,
+chase references, and produce structured reports. Expect them to be
+**token-heavy** compared to a one-shot prompt. A full
+`post-milestone-audit`, `dependency-hygiene`, or `stack-upgrade` run
+on a non-trivial repo can consume a large fraction of a context
+window and (on metered plans) a non-trivial chunk of usage.
+
+Practical tips to keep the cost in check:
+
+- **Scope the run.** Pass a target ("audit just `src/api/`",
+  "dependency-hygiene for the `web/` workspace only") instead of
+  letting the prompt sweep the whole repo.
+- **Run audits before fixes.** Read-only audits are cheaper than the
+  follow-up fix pass — review the audit first, then action only the
+  findings worth fixing.
+- **Prefer the smallest model that works.** Many of the read-only
+  audits work well on a mid-tier model; reserve the top tier for the
+  prompts that need deeper reasoning (e.g. `regression-bisect`,
+  `duplicate-logic`).
+- **Watch the context window.** On very large repos, expect to
+  `/compact` (or the equivalent) once or twice through a long audit.
 
 ## Best with documented conventions
 
@@ -201,15 +368,23 @@ See [`IssueWorkflow/README.md`](IssueWorkflow/README.md).
 
 ### `Refactoring/`
 
-Read-only audits that surface refactor opportunities.
+Read-only audits that surface refactor opportunities, paired with
+narrow-scope fix prompts that action the findings.
 
-- `duplicate-logic.prompt.md` — finds functions / modules /
-  components doing the same job under different names; clusters
-  and recommends a winner per cluster.
 - `dead-code-audit.prompt.md` — finds exports / components / env
   vars / branches that aren't used. Classifies Hard / Likely /
   Conditionally dead. Pairs with the project's static tool when
   one is configured.
+- `dead-code-fix.prompt.md` — actions the in-scope findings from
+  the dead-code audit. Defaults to `Hard dead` only; verifies the
+  build after each deletion. Commits locally; does not push.
+- `duplicate-logic.prompt.md` — finds functions / modules /
+  components doing the same job under different names; clusters
+  and recommends a winner per cluster.
+- `duplicate-code-fix.prompt.md` — actions user-selected clusters
+  from the duplicate-logic report. Defaults to `risk:low` and asks
+  which to action; verifies the build between each cluster.
+  Commits locally; does not push.
 
 See [`Refactoring/README.md`](Refactoring/README.md).
 
@@ -300,10 +475,26 @@ existing ones.
 3. Make the change. If you're adding a new prompt, add or update the
    folder `README.md` and the entry in the root `README.md` so it's
    discoverable.
-4. Open a PR against `main` with a summary and a short test plan
+4. **Regenerate adapters.** Every user-invocable `.prompt.md` carries
+   YAML frontmatter (`description:` + optional `related:`). After
+   adding or editing a prompt, run:
+
+   ```
+   python3 tools/generate-adapters.py
+   ```
+
+   Commit the regenerated `.claude/`, `.cursor/`, `.github/prompts/`,
+   `.github/copilot-instructions.md`, and `AGENTS.md` alongside the
+   prompt change. CI re-runs the generator with `--check` and fails on
+   drift.
+
+   If you added a new multi-variant family, add the variant token to
+   `VARIANT_SIGNALS` in `tools/generate-adapters.py` with its detection
+   signals — otherwise the generator fails fast on unknown variants.
+5. Open a PR against `main` with a summary and a short test plan
    (e.g. "ran against repo X, audit produced N findings, top-3
    ranked first").
-5. The PR will be merged once the change is reviewed. `main` is
+6. The PR will be merged once the change is reviewed. `main` is
    protected — PRs only, no direct pushes.
 
 ### Reporting a prompt that didn't work
@@ -320,7 +511,7 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Stable at [v1.0.0](https://github.com/matthewcsimpson/ReusablePrompts/releases/tag/v1.0.0).
+Stable at [v1.0.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.0.0).
 New collections and stack variants continue to be added as new
 project shapes come up — see the per-folder READMEs for guidance
 on adding a variant.

@@ -1,3 +1,7 @@
+---
+description: Pre-merge safety review for TypeORM migrations — catches NOT NULL on populated tables, non-concurrent indexes, FK without index, rename-on-deploy hazards.
+---
+
 # DB migration review — TypeORM variant
 
 Review database migrations written for TypeORM.
