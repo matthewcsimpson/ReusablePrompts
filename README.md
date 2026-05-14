@@ -555,7 +555,11 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Stable at [v1.2.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.2.0).
+Stable at [v1.2.1](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.2.1).
+v1.2.1 is a patch release — doc-code-drift fixes against the repo
+itself (stale skill count, dead `DependencyHygiene/` link, renamed-slug
+examples in the router template).
+
 v1.2.0 aligns every audit on the `<topic>-audit` / `<topic>-fix` pair
 convention, adds 12 new fix variants (doc-code-drift-fix, four
 db-migration-fix variants, five dependency-fix variants), and reframes
