@@ -555,10 +555,17 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Stable at [v1.1.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.1.0).
-v1.1.0 adds the `/playbook` router and per-tool adapter generator,
-four new collection families (DependencyAudit, StackUpgrade,
-ObservabilityAudit, DBMigrationAudit), and the dead-code-fix /
+Stable at [v1.2.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.2.0).
+v1.2.0 aligns every audit on the `<topic>-audit` / `<topic>-fix` pair
+convention, adds 12 new fix variants (doc-code-drift-fix, four
+db-migration-fix variants, five dependency-fix variants), and reframes
+`audit-claude-md` as `agent-instructions-audit` with auto-detect across
+every agent / LLM instruction file the project uses. Catalog grew from
+39 to 50 playbooks.
+
+v1.1.0 added the `/playbook` router and per-tool adapter generator,
+four collection families (DependencyAudit, StackUpgrade,
+ObservabilityAudit, DBMigrationAudit), and the first dead-code-fix /
 duplicate-logic-fix action prompts.
 
 New collections and stack variants continue to be added as new
