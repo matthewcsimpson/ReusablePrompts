@@ -41,8 +41,18 @@ alembic current
 ```
 
 If the migration revision appears in `alembic_version` on any shared
-database, the safe path is **writing a new corrective migration**, not
-editing the existing file. Confirm with the user before proceeding.
+database, in-place editing will produce a checksum mismatch and Alembic
+will refuse to continue. Switch to `corrective` mode (per the core)
+and write a new forward migration:
+
+```sh
+alembic revision -m "corrective: <what the new migration compensates for>"
+```
+
+Hand-edit the new file's `upgrade()` to reverse / compensate for the
+audit finding (drop the bad index and re-create with `CONCURRENTLY`,
+extract the inline backfill into a batched job, etc.). The original
+migration stays untouched.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Action findings from dependency-audit-terraform. Bump providers / modules / backends, re-lock. Verify via terraform validate + plan per category, local commits only.
+description: Action findings from dependency-audit-terraform. Bumps providers / modules / backends, multi-platform re-lock (darwin / linux), gates on terraform plan showing 0 resource changes. Local commits only.
 related: [dependency-audit-terraform]
 ---
 

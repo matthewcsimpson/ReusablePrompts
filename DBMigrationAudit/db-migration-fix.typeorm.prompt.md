@@ -39,8 +39,20 @@ typeorm migration:show -d <data-source-file>
 npm run typeorm migration:show
 ```
 
-If the migration appears as applied (✓) on any shared environment, do
-not edit — write a new corrective migration. Confirm with the user.
+If the migration appears as applied (✓) on any shared environment,
+in-place editing will skip on next deploy (TypeORM matches applied
+migrations by class name + timestamp) and your fix won't run. Switch
+to `corrective` mode (per the core) and generate a new migration:
+
+```sh
+typeorm migration:create src/migrations/Corrective<Name>
+```
+
+Hand-edit the new class's `up(queryRunner)` to reverse / compensate
+for the audit finding (drop the bad index and re-add via raw SQL
+with `CONCURRENTLY`, etc.). Use `await
+queryRunner.commitTransaction()` + `startTransaction()` to escape
+TypeORM's wrapping transaction where needed.
 
 ---
 

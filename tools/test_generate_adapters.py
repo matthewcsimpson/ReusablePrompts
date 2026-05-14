@@ -114,14 +114,42 @@ class GroupingTests(unittest.TestCase):
 
     def test_group_by_family_sorts_variants(self) -> None:
         prompts = [
-            self._p("dependency-hygiene-python", "DependencyHygiene", family="dependency-hygiene", variant="python"),
-            self._p("dependency-hygiene-npm", "DependencyHygiene", family="dependency-hygiene", variant="npm"),
+            self._p("dependency-audit-python", "DependencyAudit", family="dependency-audit", variant="python"),
+            self._p("dependency-audit-npm", "DependencyAudit", family="dependency-audit", variant="npm"),
         ]
         grouped = gen.group_by_family(prompts)
         self.assertEqual(
-            [p.variant for p in grouped["dependency-hygiene"]],
+            [p.variant for p in grouped["dependency-audit"]],
             ["npm", "python"],
         )
+
+    def test_audit_fix_pair_are_separate_families_same_collection(self) -> None:
+        """An audit family and its matching fix family share a collection
+        folder but render as two separate families in the router catalog.
+
+        Verifies the audit/fix naming convention is parsed correctly:
+        `dependency-audit.npm.prompt.md` and `dependency-fix.npm.prompt.md`
+        live in DependencyAudit/ together but group_by_family must keep
+        them in separate buckets.
+        """
+        prompts = [
+            self._p("dependency-audit-npm", "DependencyAudit", family="dependency-audit", variant="npm"),
+            self._p("dependency-audit-python", "DependencyAudit", family="dependency-audit", variant="python"),
+            self._p("dependency-fix-npm", "DependencyAudit", family="dependency-fix", variant="npm"),
+            self._p("dependency-fix-python", "DependencyAudit", family="dependency-fix", variant="python"),
+        ]
+        grouped = gen.group_by_family(prompts)
+        self.assertEqual(set(grouped.keys()), {"dependency-audit", "dependency-fix"})
+        self.assertEqual(
+            [p.variant for p in grouped["dependency-audit"]], ["npm", "python"]
+        )
+        self.assertEqual(
+            [p.variant for p in grouped["dependency-fix"]], ["npm", "python"]
+        )
+
+        by_collection = gen.group_by_collection(prompts)
+        self.assertEqual(set(by_collection.keys()), {"DependencyAudit"})
+        self.assertEqual(len(by_collection["DependencyAudit"]), 4)
 
     def test_group_by_collection_sorts_slugs(self) -> None:
         prompts = [

@@ -57,10 +57,18 @@ The user supplies:
   minors, med = arbitrary minors, high = majors. The variant supplies
   ecosystem-specific risk hints.
 
-- **Specific deps to skip** — optional. Per-dep skip list.
+- **Excluded deps** — optional comma- or space-separated list of
+  package names to skip even if they fall within an in-scope
+  category. Use for deps the user has a specific reason to hold
+  back (`react` pinned for a coordinated upgrade,
+  `@types/node` matched to a specific Node version, etc.). Pattern
+  matching is exact-name only — globs and version ranges are not
+  supported; list each excluded dep individually.
 
-- **Specific deps to include** — optional. Narrows action to just
-  those deps within the in-scope categories.
+- **Included deps** — optional, mutually exclusive with excluded.
+  Narrows action to just those deps within the in-scope categories.
+  Use when the user wants a targeted pass ("just bump `lodash`",
+  "only address vulns in `@apollo/*`").
 
 If the user hasn't specified, ask before doing anything else. Don't
 guess scope. The audit is the survey; the fix should be deliberate.
@@ -79,6 +87,23 @@ the user named one explicitly.
 If neither a file nor an inline report is available, stop and
 recommend running the matching `/playbook dependency-audit-<ecosystem>`
 first.
+
+---
+
+## Step 1.5 — Apply the include / exclude filter
+
+Before any action, build the final action list:
+
+1. Start with every audit finding under the in-scope categories.
+2. If `Included deps` is set, drop everything except those deps.
+3. If `Excluded deps` is set, drop those deps.
+4. Surface the filtered list to the user before proceeding ("After
+   filtering, X findings remain in scope: ..."). If the filter
+   removed everything, stop — there's nothing to do.
+
+Excluded deps that are vulnerable should be called out explicitly in
+the report — the user excluded them deliberately, but the audit
+flagged them, and the trail should record both facts.
 
 ---
 
@@ -244,6 +269,9 @@ Output a short summary:
 - **Deps removed** — list.
 - **Deps added** — list.
 - **Skipped within scope** — with reason per item.
+- **Excluded by filter** — list of deps the user excluded
+  (especially any with active vulnerabilities — the user opted to
+  leave them in scope-for-the-audit-but-not-this-fix).
 - **Final check result** — pass / fail with the failing command.
 - **Suggested PR title and body summary** — draft for a human to
   paste, not to open.

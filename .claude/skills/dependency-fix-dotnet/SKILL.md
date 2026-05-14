@@ -1,6 +1,6 @@
 ---
 name: dependency-fix-dotnet
-description: Action findings from dependency-audit-dotnet. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+description: Action findings from dependency-audit-dotnet. Handles Central Package Management (Directory.Packages.props), per-project vs solution bumps, multi-target frameworks. Local commits only.
 user-invocable: false
 ---
 

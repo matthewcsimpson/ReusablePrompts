@@ -33,14 +33,25 @@ and Prisma will refuse to continue with a checksum mismatch error.
 ```sh
 # Render the migration history Prisma believes is applied locally
 prisma migrate status
-
-# If status shows the migration as Applied on any shared environment,
-# the only safe fix is a new corrective migration. Confirm with the
-# user.
 ```
 
+If status shows the migration as Applied on any shared environment,
+in-place editing will produce a checksum mismatch and Prisma will
+refuse to deploy with `P3009`. Switch to `corrective` mode (per the
+core) and generate a new migration:
+
+```sh
+prisma migrate dev --create-only --name corrective_<name>
+```
+
+Hand-edit the new `migration.sql` to reverse / compensate for the
+audit finding (drop the bad index, re-create with `CONCURRENTLY`,
+etc.). The original migration stays untouched. Confirm `prisma
+migrate status` shows the new corrective as Pending before
+committing.
+
 If the migration is still in `--create-only` state (generated but not
-applied), hand-editing the SQL is the correct path.
+applied), `in-place` mode is correct — hand-editing the SQL is fine.
 
 ---
 

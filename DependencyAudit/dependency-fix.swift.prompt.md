@@ -1,5 +1,5 @@
 ---
-description: Action findings from dependency-audit-swift. Vuln fixes, bumps by risk band, removals via SPM / CocoaPods. Verify build + tests per category, local commits only.
+description: Action findings from dependency-audit-swift. Handles SPM (Package.resolved) and CocoaPods (Podfile.lock) in parallel, respects deployment-target pins. Local commits only.
 related: [dependency-audit-swift]
 ---
 

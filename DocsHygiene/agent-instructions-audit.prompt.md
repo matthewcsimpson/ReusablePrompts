@@ -62,9 +62,10 @@ For each rule in each file, extract:
 - Whether it has a concrete example (`color` not `colour`) or is
   abstract ("use sensible names").
 
-Number the rules so the report can refer to them. Use a `<file>:<n>`
-scheme when multiple files are in play (e.g. `CLAUDE.md:3`,
-`AGENTS.md:1`).
+Number the rules sequentially within each file so the report can
+refer to them. Format: **Rule N (in `<file>`)**. Examples:
+"Rule 3 (in `CLAUDE.md`)", "Rule 1 (in `AGENTS.md`)". The file is
+parenthetical so the rule numbers read naturally in prose.
 
 ## Step 3 — Audit each rule
 
@@ -122,18 +123,20 @@ Rules enumerated: <count>
 
 ## Rule-by-rule findings
 
-### Rule CLAUDE.md:1 (Section: <heading>): <one-line text>
+### Rule 1 (in `CLAUDE.md`) — Section: <heading> — <one-line text>
 
 - Clarity: ✅ / ⚠️ (proposed rewording: "<text>")
 - Concreteness: ✅ / ⚠️ (proposed example: "<example>")
 - Compliance: Strong (10/10) / Mixed (6/10) / Weak (2/10)
 - Mechanically enforceable: yes via <mechanism> / no
-- Conflict: none / conflicts with Rule AGENTS.md:3: <details>
+- Conflict: none / conflicts with Rule 3 (in `AGENTS.md`): <details>
 
 **Suggested action**: keep / reword / add example / enforce
 mechanically / retire
 
-### Rule AGENTS.md:1: ...
+### Rule 2 (in `CLAUDE.md`) — ...
+
+### Rule 1 (in `AGENTS.md`) — ...
 
 ## Missing rules (observed but undocumented)
 
@@ -146,13 +149,14 @@ Patterns observed in code or recent PRs that aren't documented:
 
 Rules in different instruction files that disagree:
 
-- <file-a>:<n> says X, <file-b>:<m> says Y. Recommend: <resolution>.
+- Rule N (in `<file-a>`) says X; Rule M (in `<file-b>`) says Y.
+  Recommend: <resolution>.
 
 ## Mechanical enforcement opportunities
 
 Rules currently doc-only that could be moved to lint / hooks:
 
-- Rule <file>:<n> (<text>) — propose: <hook / ESLint rule /
+- Rule N (in `<file>`) — "<text>" — propose: <hook / ESLint rule /
   pre-commit check>
 
 ## Summary

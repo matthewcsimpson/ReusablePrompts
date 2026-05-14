@@ -1,6 +1,6 @@
 ---
 name: dependency-fix-npm
-description: Action findings from dependency-audit-npm. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+description: Action findings from dependency-audit-npm. Detects npm / pnpm / yarn (classic or berry), respects Corepack, uses overrides / resolutions for transitive vulns. Local commits only.
 user-invocable: false
 ---
 

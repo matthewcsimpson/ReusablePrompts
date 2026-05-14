@@ -79,19 +79,19 @@ This file is generated from the prompts' YAML frontmatter by
 - **dependency-audit-terraform** — Audit a Terraform / OpenTofu codebase's provider, module, and backend dependencies for outdated versions, vulnerabilities, and duplicate version pins.
   Read: `DependencyAudit/dependency-audit.terraform.prompt.md`
   Related: `dependency-fix-terraform`
-- **dependency-fix-dotnet** — Action findings from dependency-audit-dotnet. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+- **dependency-fix-dotnet** — Action findings from dependency-audit-dotnet. Handles Central Package Management (Directory.Packages.props), per-project vs solution bumps, multi-target frameworks. Local commits only.
   Read: `DependencyAudit/dependency-fix.dotnet.prompt.md`
   Related: `dependency-audit-dotnet`
-- **dependency-fix-npm** — Action findings from dependency-audit-npm. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+- **dependency-fix-npm** — Action findings from dependency-audit-npm. Detects npm / pnpm / yarn (classic or berry), respects Corepack, uses overrides / resolutions for transitive vulns. Local commits only.
   Read: `DependencyAudit/dependency-fix.npm.prompt.md`
   Related: `dependency-audit-npm`
-- **dependency-fix-python** — Action findings from dependency-audit-python. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+- **dependency-fix-python** — Action findings from dependency-audit-python. Detects uv / Poetry / pdm / pip-tools, regenerates requirements*.txt from .in, handles dev / test / extras groups. Local commits only.
   Read: `DependencyAudit/dependency-fix.python.prompt.md`
   Related: `dependency-audit-python`
-- **dependency-fix-swift** — Action findings from dependency-audit-swift. Vuln fixes, bumps by risk band, removals via SPM / CocoaPods. Verify build + tests per category, local commits only.
+- **dependency-fix-swift** — Action findings from dependency-audit-swift. Handles SPM (Package.resolved) and CocoaPods (Podfile.lock) in parallel, respects deployment-target pins. Local commits only.
   Read: `DependencyAudit/dependency-fix.swift.prompt.md`
   Related: `dependency-audit-swift`
-- **dependency-fix-terraform** — Action findings from dependency-audit-terraform. Bump providers / modules / backends, re-lock. Verify via terraform validate + plan per category, local commits only.
+- **dependency-fix-terraform** — Action findings from dependency-audit-terraform. Bumps providers / modules / backends, multi-platform re-lock (darwin / linux), gates on terraform plan showing 0 resource changes. Local commits only.
   Read: `DependencyAudit/dependency-fix.terraform.prompt.md`
   Related: `dependency-audit-terraform`
 

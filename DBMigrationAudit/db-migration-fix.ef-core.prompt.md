@@ -39,8 +39,20 @@ dotnet ef migrations list
 ```
 
 If the migration appears in `__EFMigrationsHistory` on any shared
-database, the safe path is **a new corrective migration**, not an
-in-place edit.
+database, in-place editing changes the migration's recorded
+fingerprint and EF Core's runtime check (`Database.Migrate()`) may
+fail. Switch to `corrective` mode (per the core) and generate a new
+migration:
+
+```sh
+dotnet ef migrations add Corrective<Name>
+```
+
+Hand-edit the new migration's `Up(MigrationBuilder)` to reverse /
+compensate for the audit finding (drop the bad index and re-add with
+`suppressTransaction: true` + `CONCURRENTLY`, etc.). The
+ModelSnapshot.cs may need a regeneration via
+`dotnet ef migrations script --idempotent` to confirm consistency.
 
 ---
 

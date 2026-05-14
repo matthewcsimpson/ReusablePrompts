@@ -1,6 +1,6 @@
 ---
 name: dependency-fix-python
-description: Action findings from dependency-audit-python. Vuln fixes, bumps by risk band, removals, lockfile re-resolution. Verify build + tests per category, local commits only.
+description: Action findings from dependency-audit-python. Detects uv / Poetry / pdm / pip-tools, regenerates requirements*.txt from .in, handles dev / test / extras groups. Local commits only.
 user-invocable: false
 ---
 
