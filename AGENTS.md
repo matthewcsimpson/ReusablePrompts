@@ -138,6 +138,9 @@ generated from those sources by `tools/generate-adapters.py`.
 
 ## MilestoneSmoke
 
+- **`post-milestone-smoke-fix`** — Action ❌ Fail findings from the most recent post-milestone smoke-test report. Commits locally; does not push or open a PR.
+  Path: `MilestoneSmoke/post-milestone-smoke-fix.prompt.md`
+  Related: `post-milestone-smoke-test-api`, `post-milestone-smoke-test-cli`, `post-milestone-smoke-test-ios`, `post-milestone-smoke-test-web`
 - **`post-milestone-smoke-test-api`** — Drive a running HTTP API after a milestone tag is cut — hit headline endpoints with concrete requests, assert response shape and auth behaviour, write a pass/fail/blocked report.
   Path: `MilestoneSmoke/post-milestone-smoke-test.api.prompt.md`
 - **`post-milestone-smoke-test-cli`** — Drive a CLI binary after a milestone tag is cut — invoke headline commands, observe exit code / stdout / stderr / side effects, write a pass/fail/blocked report.

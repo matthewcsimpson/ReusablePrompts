@@ -245,8 +245,6 @@ Variants:
   File: `../../MilestoneSmoke/post-milestone-smoke-test.web.prompt.md`
   Detect: usage context — ask the user which artifact applies.
 
-Related across the family: `post-milestone-smoke-fix`
-
 ### `stack-upgrade`
 
 Variants:
