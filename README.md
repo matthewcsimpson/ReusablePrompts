@@ -563,8 +563,19 @@ MIT — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Stable at [v1.2.1](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.2.1).
-v1.2.1 is a patch release — doc-code-drift fixes against the repo
+Stable at [v1.3.0](https://github.com/matthewcsimpson/agentic-playbooks/releases/tag/v1.3.0).
+v1.3.0 adds two playbooks and tightens the dispatcher: a stack-agnostic
+`post-milestone-smoke-fix` (the behavioural counterpart to
+`post-milestone-fix`, scopes to ❌ Fail flows from a smoke-test report,
+clusters by root cause, commits per cluster), and an
+`audit-duplicate-issues-clickup` variant (List- or Folder-scoped via
+the ClickUp REST API, list-specific status sets handled). Dispatcher
+rule (d) generalised from "smoke-test is usage-driven" to "usage-driven
+families — ask, never auto-detect," now covering both
+`post-milestone-smoke-test` and `audit-duplicate-issues`. Catalog grew
+from 50 to 52 playbooks.
+
+v1.2.1 was a patch release — doc-code-drift fixes against the repo
 itself (stale skill count, dead `DependencyHygiene/` link, renamed-slug
 examples in the router template).
 
