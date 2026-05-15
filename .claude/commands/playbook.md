@@ -45,9 +45,20 @@ proceeding. Never silently pick a variant when the stack is ambiguous.
 
 **(d) Smoke-test variants are usage-driven, not file-tree-driven.**
 Variants `-api`, `-cli`, `-ios`, `-web` of `post-milestone-smoke-test`
-cannot be inferred from the file tree alone. If the user invokes the
-family name `post-milestone-smoke-test` without a variant, ask which
-artifact they just shipped (web app, HTTP API, CLI binary, iOS app).
+cannot be inferred from the file tree alone — auto-detection does not
+apply. If the user invokes the family name `post-milestone-smoke-test`
+without a variant, present a structured choice (`AskUserQuestion` in
+Claude Code, or an equivalent numbered prompt in other harnesses) with
+exactly these four options, then dispatch to the chosen variant:
+
+- **Web app** — browser-driven flows (`post-milestone-smoke-test-web`)
+- **HTTP API** — REST / GraphQL / RPC over HTTP (`post-milestone-smoke-test-api`)
+- **CLI** — non-interactive binary or script (`post-milestone-smoke-test-cli`)
+- **iOS app** — native iOS via the Simulator (`post-milestone-smoke-test-ios`)
+
+Do not offer an "auto-detect" option here — there is nothing reliable
+to detect against. The user can still bypass the prompt by passing the
+full slug (e.g. `/playbook post-milestone-smoke-test-web`).
 
 **(e) Unknown slug.** If the slug matches nothing, list the closest
 catalog entries (by prefix match on the slug) and ask the user to
@@ -83,6 +94,9 @@ summarise, paraphrase, or skip steps unless the playbook itself says to.
 - **`post-milestone-fix`** — Action the in-scope findings from the most recent post-milestone audit report. Commits locally; does not push or open a PR.
   File: `../../MilestoneAudit/post-milestone-fix.prompt.md`
   Related: `post-milestone-audit-dotnet`, `post-milestone-audit-nestjs`, `post-milestone-audit-nextjs`, `post-milestone-audit-python`, `post-milestone-audit-react-native`, `post-milestone-audit-swift`, `post-milestone-audit-terraform`
+- **`post-milestone-smoke-fix`** — Action ❌ Fail findings from the most recent post-milestone smoke-test report. Commits locally; does not push or open a PR.
+  File: `../../MilestoneSmoke/post-milestone-smoke-fix.prompt.md`
+  Related: `post-milestone-smoke-test-api`, `post-milestone-smoke-test-cli`, `post-milestone-smoke-test-ios`, `post-milestone-smoke-test-web`
 - **`pre-pr-checklist`** — Before opening a pull request, run the project's check suite, scan the diff for things reviewers can't easily catch (debug code, secrets, missing tests), and draft a PR body.
   File: `../../PRWorkflow/pre-pr-checklist.prompt.md`
 - **`regression-bisect`** — Given last-known-good, symptom, and reproduction steps, drive a disciplined git bisect to the breaking commit and propose a fix.
@@ -230,6 +244,8 @@ Variants:
 - `post-milestone-smoke-test-web` — Web app smoke test (browser MCP)
   File: `../../MilestoneSmoke/post-milestone-smoke-test.web.prompt.md`
   Detect: usage context — ask the user which artifact applies.
+
+Related across the family: `post-milestone-smoke-fix`
 
 ### `stack-upgrade`
 

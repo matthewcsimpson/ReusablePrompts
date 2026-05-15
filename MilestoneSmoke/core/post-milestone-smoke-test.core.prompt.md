@@ -23,7 +23,7 @@ A variant supplies:
 Everything else below is shared.
 
 Do not modify any code. The smoke run is observation and execution
-— fixes go in their own follow-up issues.
+— fixes belong in a separate follow-up.
 
 ---
 
@@ -191,8 +191,6 @@ win since last milestone>
 - Artefact: <variant-specific path>
 - Probes:
   - <probe description> — ✅/❌
-- Fix-now issue title (if Fail): <one-line draft suitable for
-  `gh issue create --title`>
 
 ### 2. <Title>
 ...
@@ -208,11 +206,11 @@ docs, with a one-line reason for each.>
 
 ## Recommended follow-ups
 
-For every ❌ Fail and every cross-cutting failure, propose a
-draft issue:
+For every ❌ Fail and every cross-cutting failure, list the flow
+title and a one-sentence repro so a human (or follow-up prompt)
+can act on it.
 
-- ❌ <flow title> — `<draft fix-now issue title>` — <one-sentence
-  repro>
+- ❌ <flow title> — <one-sentence repro>
 ```
 
 ---
@@ -235,6 +233,6 @@ draft issue:
 - A flow that can't be executed because of a setup gap is
   **blocked**, not failed. Do not mark it pass to keep the run
   clean.
-- Do not open issues for failures. The recommended-follow-ups
-  section drafts the titles so a human (or follow-up prompt) can
-  open them in a separate step.
+- Do not modify code, file issues, or take any action on
+  failures. The report is observation-only; follow-up actions
+  belong in separate prompts.

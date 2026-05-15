@@ -270,6 +270,8 @@ static drift.
   app through the iOS Simulator via Maestro or XCUITest.
 - `core/post-milestone-smoke-test.core.prompt.md` — shared
   scaffold (not invoked directly).
+- `post-milestone-smoke-fix.prompt.md` — actions ❌ Fail flows
+  from the smoke report. Commits locally only. Stack-agnostic.
 
 See [`MilestoneSmoke/README.md`](MilestoneSmoke/README.md).
 
