@@ -42,22 +42,30 @@ variant's file. If multiple match (a polyglot repo), or none match,
 list the candidate variants and ask the user which to run before
 proceeding. Never silently pick a variant when the stack is ambiguous.
 
-**(d) Smoke-test variants are usage-driven, not file-tree-driven.**
-Variants `-api`, `-cli`, `-ios`, `-web` of `post-milestone-smoke-test`
-cannot be inferred from the file tree alone — auto-detection does not
-apply. If the user invokes the family name `post-milestone-smoke-test`
-without a variant, present a structured choice (`AskUserQuestion` in
-Claude Code, or an equivalent numbered prompt in other harnesses) with
-exactly these four options, then dispatch to the chosen variant:
+**(d) Usage-driven families — ask, never auto-detect.** Some
+families' variants are not inferable from the file tree, so
+auto-detection does not apply and rule (c) is not used. If the
+user invokes one of these family names without a variant, present
+a structured choice (`AskUserQuestion` in Claude Code, or an
+equivalent numbered prompt in other harnesses) and dispatch to
+the chosen variant. Do not offer an "auto-detect" option — there
+is nothing reliable to detect against. The user can still bypass
+the prompt by passing the full slug.
 
-- **Web app** — browser-driven flows (`post-milestone-smoke-test-web`)
-- **HTTP API** — REST / GraphQL / RPC over HTTP (`post-milestone-smoke-test-api`)
-- **CLI** — non-interactive binary or script (`post-milestone-smoke-test-cli`)
-- **iOS app** — native iOS via the Simulator (`post-milestone-smoke-test-ios`)
+- **`post-milestone-smoke-test`** — ask which artifact they just
+  shipped:
+  - **Web app** — browser-driven flows (`post-milestone-smoke-test-web`)
+  - **HTTP API** — REST / GraphQL / RPC over HTTP (`post-milestone-smoke-test-api`)
+  - **CLI** — non-interactive binary or script (`post-milestone-smoke-test-cli`)
+  - **iOS app** — native iOS via the Simulator (`post-milestone-smoke-test-ios`)
 
-Do not offer an "auto-detect" option here — there is nothing reliable
-to detect against. The user can still bypass the prompt by passing the
-full slug (e.g. `/playbook post-milestone-smoke-test-web`).
+- **`audit-duplicate-issues`** — ask which tracker hosts the
+  issues. The local file tree does not reliably indicate this
+  (a repo can have `.github/` for Actions but use a different
+  tracker for tickets), and silently picking the wrong tracker
+  risks running closures against the wrong system:
+  - **GitHub** — issues hosted on github.com (`audit-duplicate-issues-github`)
+  - **ClickUp** — tasks in a ClickUp List or Folder (`audit-duplicate-issues-clickup`)
 
 **(e) Unknown slug.** If the slug matches nothing, list the closest
 catalog entries (by prefix match on the slug) and ask the user to
@@ -113,9 +121,12 @@ summarise, paraphrase, or skip steps unless the playbook itself says to.
 
 Variants:
 
+- `audit-duplicate-issues-clickup` — ClickUp List or Folder
+  File: `../../IssueWorkflow/audit-duplicate-issues.clickup.prompt.md`
+  Detect: usage context — ask the user which variant applies.
 - `audit-duplicate-issues-github` — GitHub-hosted issue tracker
   File: `../../IssueWorkflow/audit-duplicate-issues.github.prompt.md`
-  Detect: `.github/` directory, `gh` CLI authenticated for an `origin` remote on github.com
+  Detect: usage context — ask the user which variant applies.
 
 ### `db-migration-audit`
 
@@ -233,16 +244,16 @@ Variants:
 
 - `post-milestone-smoke-test-api` — HTTP API smoke test
   File: `../../MilestoneSmoke/post-milestone-smoke-test.api.prompt.md`
-  Detect: usage context — ask the user which artifact applies.
+  Detect: usage context — ask the user which variant applies.
 - `post-milestone-smoke-test-cli` — CLI binary smoke test
   File: `../../MilestoneSmoke/post-milestone-smoke-test.cli.prompt.md`
-  Detect: usage context — ask the user which artifact applies.
+  Detect: usage context — ask the user which variant applies.
 - `post-milestone-smoke-test-ios` — iOS Simulator smoke test
   File: `../../MilestoneSmoke/post-milestone-smoke-test.ios.prompt.md`
-  Detect: usage context — ask the user which artifact applies.
+  Detect: usage context — ask the user which variant applies.
 - `post-milestone-smoke-test-web` — Web app smoke test (browser MCP)
   File: `../../MilestoneSmoke/post-milestone-smoke-test.web.prompt.md`
-  Detect: usage context — ask the user which artifact applies.
+  Detect: usage context — ask the user which variant applies.
 
 ### `stack-upgrade`
 

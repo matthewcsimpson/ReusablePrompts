@@ -108,6 +108,8 @@ This file is generated from the prompts' YAML frontmatter by
 
 ### IssueWorkflow
 
+- **audit-duplicate-issues-clickup** — Survey a ClickUp List or Folder for duplicate and near-duplicate tasks; cluster, classify, and recommend an action per cluster. Stops before any closure or edit.
+  Read: `IssueWorkflow/audit-duplicate-issues.clickup.prompt.md`
 - **audit-duplicate-issues-github** — Survey a GitHub repository's open issues for duplicates and near-duplicates; cluster, classify, and recommend an action per cluster. Stops before any closure or edit.
   Read: `IssueWorkflow/audit-duplicate-issues.github.prompt.md`
 

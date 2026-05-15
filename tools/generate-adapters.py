@@ -109,7 +109,9 @@ VARIANT_SIGNALS: dict[str, tuple[str, list[str]]] = {
     "web":          ("Web app smoke test (browser MCP)",
                      []),
     "github":       ("GitHub-hosted issue tracker",
-                     ["`.github/` directory, `gh` CLI authenticated for an `origin` remote on github.com"]),
+                     []),  # usage-context only — ask the user (a repo can have .github/ for Actions but use a different tracker for tickets)
+    "clickup":      ("ClickUp List or Folder",
+                     []),  # usage-context only — ask the user
 }
 
 
@@ -320,22 +322,30 @@ def render_router_body(prompts: list[Prompt], *, absolute_root: Path | None, dep
         "list the candidate variants and ask the user which to run before",
         "proceeding. Never silently pick a variant when the stack is ambiguous.",
         "",
-        "**(d) Smoke-test variants are usage-driven, not file-tree-driven.**",
-        "Variants `-api`, `-cli`, `-ios`, `-web` of `post-milestone-smoke-test`",
-        "cannot be inferred from the file tree alone — auto-detection does not",
-        "apply. If the user invokes the family name `post-milestone-smoke-test`",
-        "without a variant, present a structured choice (`AskUserQuestion` in",
-        "Claude Code, or an equivalent numbered prompt in other harnesses) with",
-        "exactly these four options, then dispatch to the chosen variant:",
+        "**(d) Usage-driven families — ask, never auto-detect.** Some",
+        "families' variants are not inferable from the file tree, so",
+        "auto-detection does not apply and rule (c) is not used. If the",
+        "user invokes one of these family names without a variant, present",
+        "a structured choice (`AskUserQuestion` in Claude Code, or an",
+        "equivalent numbered prompt in other harnesses) and dispatch to",
+        "the chosen variant. Do not offer an \"auto-detect\" option — there",
+        "is nothing reliable to detect against. The user can still bypass",
+        "the prompt by passing the full slug.",
         "",
-        "- **Web app** — browser-driven flows (`post-milestone-smoke-test-web`)",
-        "- **HTTP API** — REST / GraphQL / RPC over HTTP (`post-milestone-smoke-test-api`)",
-        "- **CLI** — non-interactive binary or script (`post-milestone-smoke-test-cli`)",
-        "- **iOS app** — native iOS via the Simulator (`post-milestone-smoke-test-ios`)",
+        "- **`post-milestone-smoke-test`** — ask which artifact they just",
+        "  shipped:",
+        "  - **Web app** — browser-driven flows (`post-milestone-smoke-test-web`)",
+        "  - **HTTP API** — REST / GraphQL / RPC over HTTP (`post-milestone-smoke-test-api`)",
+        "  - **CLI** — non-interactive binary or script (`post-milestone-smoke-test-cli`)",
+        "  - **iOS app** — native iOS via the Simulator (`post-milestone-smoke-test-ios`)",
         "",
-        "Do not offer an \"auto-detect\" option here — there is nothing reliable",
-        "to detect against. The user can still bypass the prompt by passing the",
-        "full slug (e.g. `/playbook post-milestone-smoke-test-web`).",
+        "- **`audit-duplicate-issues`** — ask which tracker hosts the",
+        "  issues. The local file tree does not reliably indicate this",
+        "  (a repo can have `.github/` for Actions but use a different",
+        "  tracker for tickets), and silently picking the wrong tracker",
+        "  risks running closures against the wrong system:",
+        "  - **GitHub** — issues hosted on github.com (`audit-duplicate-issues-github`)",
+        "  - **ClickUp** — tasks in a ClickUp List or Folder (`audit-duplicate-issues-clickup`)",
         "",
         "**(e) Unknown slug.** If the slug matches nothing, list the closest",
         "catalog entries (by prefix match on the slug) and ask the user to",
@@ -371,7 +381,7 @@ def render_router_body(prompts: list[Prompt], *, absolute_root: Path | None, dep
             if signals:
                 lines.append(f"  Detect: {'; '.join(signals)}")
             else:
-                lines.append("  Detect: usage context — ask the user which artifact applies.")
+                lines.append("  Detect: usage context — ask the user which variant applies.")
         if items[0].related:
             related = ", ".join(f"`{r}`" for r in items[0].related)
             lines.append("")
