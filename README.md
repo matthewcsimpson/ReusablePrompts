@@ -72,9 +72,10 @@ After `--install-global`, from any project:
 - **Family name** (`dependency-audit`, `stack-upgrade`,
   `db-migration-audit`, `post-milestone-audit`) → Claude detects the
   stack from the working directory and runs the matching variant.
-- **Smoke-test family** (`post-milestone-smoke-test`) → can't be
-  detected from the file tree; Claude asks which artifact you shipped
-  (api / cli / ios / web).
+- **Usage-driven families** (`post-milestone-smoke-test`,
+  `audit-duplicate-issues`) → can't be detected from the file tree;
+  Claude asks which variant applies (smoke: api / cli / ios / web;
+  duplicate-issues: github / clickup).
 - **Natural language** still works — say "audit my test coverage" and
   the matching skill auto-triggers by description.
 
@@ -376,14 +377,19 @@ See [`DBMigrationAudit/README.md`](DBMigrationAudit/README.md).
 ### `IssueWorkflow/`
 
 Issue-tracker maintenance. Filenames carry a platform tag
-(`.github`) — variants for other trackers (GitLab, Linear, Jira)
-would sit alongside.
+(`.github`, `.clickup`) — variants for other trackers (GitLab,
+Linear, Jira) would sit alongside.
 
 - `audit-duplicate-issues.github.prompt.md` — GitHub variant.
   Surveys open issues for duplicates, clusters them, classifies,
   and recommends an action per cluster. Asks for the target
   `OWNER/REPO` at the start of the run. Stops for confirmation
   before any closure or edit.
+- `audit-duplicate-issues.clickup.prompt.md` — ClickUp variant.
+  Audits a List or Folder via the REST API. Asks scope (List or
+  Folder) and identifier (name or ID) at the start. Requires
+  `CLICKUP_API_TOKEN`. Stops for confirmation before any closure
+  or edit.
 - `core/audit-duplicate-issues.core.prompt.md` — shared scaffold
   (not invoked directly).
 
