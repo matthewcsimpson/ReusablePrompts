@@ -9,13 +9,14 @@ etc.) — the variant you pick depends on what the project exposes.
 The user-runnable variants sit at the top of this folder; the
 shared scaffold lives in `core/`.
 
-| Prompt | Scope |
-|---|---|
-| `post-milestone-smoke-test.web.prompt.md` | Web app driven through a browser MCP |
-| `post-milestone-smoke-test.api.prompt.md` | HTTP API exercised with `curl` / `httpie` against a running instance |
-| `post-milestone-smoke-test.cli.prompt.md` | Non-interactive CLI invoked with concrete args, observing exit code / stdout / stderr / side-effects |
-| `post-milestone-smoke-test.ios.prompt.md` | iOS app driven through the iOS Simulator via Maestro or XCUITest |
-| `core/post-milestone-smoke-test.core.prompt.md` | Shared scaffold. Not invoked directly. |
+| Step | Prompt | Scope |
+|---|---|---|
+| 1 | `post-milestone-smoke-test.web.prompt.md` | Web app driven through a browser MCP |
+| 1 | `post-milestone-smoke-test.api.prompt.md` | HTTP API exercised with `curl` / `httpie` against a running instance |
+| 1 | `post-milestone-smoke-test.cli.prompt.md` | Non-interactive CLI invoked with concrete args, observing exit code / stdout / stderr / side-effects |
+| 1 | `post-milestone-smoke-test.ios.prompt.md` | iOS app driven through the iOS Simulator via Maestro or XCUITest |
+| — | `core/post-milestone-smoke-test.core.prompt.md` | Shared scaffold. Not invoked directly. |
+| 2 | `post-milestone-smoke-fix.prompt.md` | Stack-agnostic — reads the smoke report and actions ❌ Fail flows you opt into. Commits locally only. |
 
 ## Typical workflow
 
@@ -23,7 +24,12 @@ shared scaffold lives in `core/`.
 2. Run the **smoke variant** that matches your project's runtime
    surface — produces `docs/smoke-tests/<tag>.md` and any
    artefacts under `docs/smoke-tests/<tag>/`.
-3. Run [`MilestoneAudit/`](../MilestoneAudit/) for static drift
+3. If the smoke report has ❌ Fail entries, run
+   `post-milestone-smoke-fix.prompt.md` to action the regressions
+   you want fixed in this cycle. Then re-run the smoke variant to
+   confirm the fixes hold — mechanical checks alone can't prove a
+   flow now passes end-to-end.
+4. Run [`MilestoneAudit/`](../MilestoneAudit/) for static drift
    after the smoke test confirms behaviour is intact.
 
 The smoke runs first because the audit is static — it doesn't
